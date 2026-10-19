@@ -1,0 +1,20 @@
+{
+  "umask": "022",
+  "data_dir_mode": "0o755",
+  "desk_db_mode": "0o644",
+  "desk_db_name": "desk.db",
+  "symlink_target_replaced": true,
+  "csv_has_unquoted_formula": true,
+  "csv_text": "id,goal_id,goal,claim,source_url,quote,note,approved_at\n1,1,g,c,https://a.example/x,q,,2026-10-19T17:01:58Z\n2,1,g,=1+1,https://a.example/y,ordinary quote,,2026-10-19T17:01:58Z\n",
+  "sql_literal_apostrophe": "'O''Reilly'",
+  "sql_literal_backslash_quote": "'x\\'''",
+  "sql_literal_newline_has_raw_nl": true,
+  "bigquery_apostrophe_excerpt": " (1, 1, 'g', 'O''Reilly', 'https://a.example/x', 'q', 'n', '2026-10-19T17:01:58Z');\n",
+  "bigquery_backslash_excerpt": " (1, 1, 'g', 'x\\''', 'https://a.example/x', 'q', 'n', '2026-10-19T17:01:58Z');\n",
+  "sqlite_claims": [
+    "c",
+    "=1+1"
+  ],
+  "workspace_write": "OSError",
+  "net_namespace_note": "process started with unshare --net; no socket opened"
+}
