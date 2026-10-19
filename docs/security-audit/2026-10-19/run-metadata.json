@@ -1,0 +1,64 @@
+{
+  "run_id": "research-desk-2026-10-19-standard",
+  "repo": "FibonacciAi/research-desk",
+  "target": "/workspace",
+  "source_ref": {
+    "commit": "0faecdf3a417e29194f1505e5a7b51b9d421dcbf",
+    "dirty": false,
+    "note": "Worktree was clean at audit start. Audit docs are the only intended additions."
+  },
+  "profile": "standard",
+  "scope_paths": ["."],
+  "budget": null,
+  "execution_policy": "sandboxed-source-and-local-only",
+  "selected_companion_files": [
+    "AI-AND-LLM.md",
+    "DATA-ISOLATION-AND-LIFECYCLE.md",
+    "PROTOCOLS-RPC-AND-MESSAGING.md",
+    "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+    "SUPPLY-CHAIN-AND-RELEASE.md"
+  ],
+  "excluded_companion_files": [
+    "WEB-PROTOCOL-AND-AUTH.md",
+    "CLIENT-SIDE.md",
+    "CLOUD-AND-DEPLOYMENT.md",
+    "MEMORY-SAFETY-AND-BINARY.md",
+    "DESKTOP-MOBILE-AND-LOCAL-IPC.md"
+  ],
+  "prior_run_paths": [],
+  "prior_run_note": "No compatible coverage-ledger.json or findings.json exists in this repository or in any earlier audit directory.",
+  "shared_file_owners": {
+    "run-metadata.json": "parent",
+    "architecture.md": "parent",
+    "coverage-ledger.json": "parent",
+    "findings.json": "parent",
+    "REPORT.md": "parent",
+    "FINDINGS-DETAIL.md": "parent",
+    "NEEDS-VALIDATION.md": "parent"
+  },
+  "output_directory": "docs/security-audit/2026-10-19",
+  "output_directory_note": "The operator explicitly required this in-repo directory and a pull request that adds the audit documents. That instruction overrides the skill default of an external gitignored directory.",
+  "sandbox": {
+    "available": true,
+    "mechanism": "unshare --user --map-root-user --mount --net --pid --fork --mount-proc",
+    "network": "fresh network namespace with no external route",
+    "environment": "env -i allowlist: PATH, HOME, TMPDIR, LANG, LC_ALL, PYTHONDONTWRITEBYTECODE",
+    "filesystem": "bind+remount read-only for /workspace, /usr, /lib, /lib64, /bin, /sbin, /opt, /home, /var, /etc, /root, and /dev/shm; /cursor covered by an empty read-only bind",
+    "writes": "process may write only the assigned scratch directory",
+    "limits": "ulimit -t 10, -f 4096, -n 64, -u 32, wall-clock timeout 20s"
+  },
+  "agent_invocations": {
+    "reconnaissance": 4,
+    "hunters_planned": 4,
+    "hunters_spent": 4,
+    "hunter_waves": 1,
+    "post_wave_critic": 1,
+    "post_wave_critic_followup": "reassignments withdrawn; no second hunter wave",
+    "final_clean_critic": 1,
+    "final_clean_critic_result": "stop true; missing_units empty; reassign_ids empty",
+    "phase3_verifiers": 4,
+    "phase5_verifiers": 4,
+    "phase5_result": "all four needs_validation records returned decision verified"
+  },
+  "run_status": "complete"
+}

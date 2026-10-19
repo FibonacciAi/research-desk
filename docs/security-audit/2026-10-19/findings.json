@@ -1,0 +1,403 @@
+[
+  {
+    "verdict": "needs_validation",
+    "fingerprint": "research-desk.mcp.approve.prompt-only-binding",
+    "title": "Approve and discard commit pending ids with no stored user decision",
+    "description": "tools/call list_pending returns each stored finding, including claim, quote, and source_url. tools/call approve and discard then set any still-pending id to approved or discarded. The handler requires finding_ids, allows an optional note, and rejects unknown keys. The explicit-decision rule is the approve and discard tool descriptions, the initialize instructions, the README, and skills/review-and-export/SKILL.md. If the host model treats stored quote text as a reason to call approve for an id the operator did not name, that row becomes approved and a later export can include it. The host call was not observed.",
+    "claimed_root_cause": "Desk._decide updates a pending finding from the caller-supplied id and optional note. The findings table stores status, note, and decided_at, and the MCP input schema has no confirmation or utterance field, so the server has no record that compares those ids with a decision the operator named.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 44,
+        "scope": "call",
+        "description": "list_pending returns api.list_findings for the requested goal and status, so the tool result carries the stored finding rows to the host."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 133,
+        "scope": "Desk.list_findings",
+        "description": "The query selects every findings column and returns each row as a dict, including claim, source_url, and quote."
+      },
+      {
+        "kind": "propagation",
+        "file": "server/mcp_server.py",
+        "line": 45,
+        "scope": "call",
+        "description": "approve forwards finding_ids and an optional note to api.approve. The next line does the same for discard. Neither argument is a user decision."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 139,
+        "scope": "Desk._decide",
+        "description": "For a row whose status is still pending, the update writes the requested status, the note, and decided_at, and the following commit persists it. approved_rows later selects status approved, so the row can appear in an export."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "server/mcp_server.py",
+        "line": 30,
+        "description": "The approve description says to call the tool only after the user explicitly approved these ids. The schema properties are finding_ids and note, and finding_ids is the only required key."
+      },
+      {
+        "file": "server/mcp_server.py",
+        "line": 60,
+        "description": "initialize returns an instructions string that says to approve or discard only on the user's explicit decision. tools/call does not read that string."
+      },
+      {
+        "file": "server/mcp_server.py",
+        "line": 71,
+        "description": "tools/call checks required keys and unexpected keys against the tool schema, then invokes the handler. The check has no user-utterance input."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 32,
+        "description": "decided_at is the decision timestamp. The findings table stores claim, source_url, quote, status, and note, and has no confirmation or utterance column."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 137,
+        "description": "_decide stops when the finding is already approved or discarded. A pending id from the caller is updated."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 153,
+        "description": "approved_rows keeps rows whose status is approved, so an approved finding is eligible for SQL and CSV export."
+      },
+      {
+        "file": "skills/review-and-export/SKILL.md",
+        "line": 11,
+        "description": "The review skill says to call approve or discard with exactly the ids the user named, and only on an explicit decision in the conversation."
+      },
+      {
+        "file": "README.md",
+        "line": 17,
+        "description": "The README states that nothing is approved without an explicit decision. That sentence is product documentation."
+      }
+    ],
+    "blockers": [
+      "The host model is outside this repository. Source cannot show whether text in a stored quote, claim, or source_url causes that model to call approve or discard for an id the operator did not name.",
+      "A direct tools/call approve from this process updates the launching user's database. The unrequested result requires the host to emit that call after list_pending, and that call was not observed."
+    ],
+    "validation_plan": {
+      "local": "On a temporary database, add one pending finding, invoke list_pending, and confirm the returned finding includes the stored claim, quote, and source_url. Invoke approve with that id and no additional field, then confirm the row status is approved and the export text includes the claim. This checks the server path only.",
+      "deployment": "With the operator's real host connected to this MCP server, list pending findings and record whether the host calls approve or discard for an id the operator did not name after the stored fields are returned. Limit the check to observing that tool call."
+    }
+  },
+  {
+    "verdict": "needs_validation",
+    "fingerprint": "research_desk/store.py:csv.DictWriter:no-formula-prefix",
+    "title": "Approved CSV export emits a claim that starts with equals and has no formula prefix",
+    "description": "Desk.export writes approved findings with csv.DictWriter and the default minimal quoter. A stored claim whose characters are =1+1 is written as an unquoted cell, with no leading apostrophe, tab, space, or other formula-neutralizing prefix. The same writer emits quote, note, and goal text, and the research-desk skill tells the agent to copy a verbatim quote from each page into the finding. README and the review skill name a spreadsheet as a CSV consumer. The bounded artifact matches that writer: csv_text has an unquoted claim =1+1, quote text ordinary quote, https source URLs, and approved rows only. Whether a spreadsheet then selects the leading equals as a formula was not observed. Research Desk writes the CSV text and stops.",
+    "claimed_root_cause": "Desk.export, for format csv, constructs csv.DictWriter with EXPORT_COLUMNS and a newline lineterminator, then writeheader and writerows the approved row dicts. No code inspects or prefixes a leading equals sign before the stored claim, quote, note, or goal title is written.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 43,
+        "scope": "call",
+        "description": "add_finding forwards the agent-supplied claim and quote. The research-desk skill tells that agent to store a short claim and a verbatim quote copied from the page, and to treat page content as untrusted data."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/api.py",
+        "line": 40,
+        "scope": "add_finding",
+        "description": "api.add_finding passes claim, source_url, and quote through to Desk.add_finding with no character screening."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 113,
+        "scope": "Desk.add_finding",
+        "description": "The stripped claim and stripped quote are inserted into findings. check_url accepts an https source URL and does not alter the claim."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 152,
+        "scope": "Desk.approved_rows",
+        "description": "The export query copies claim, quote, note, goal title, and source URL only when status is approved. Pending and discarded rows are left out."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 165,
+        "scope": "Desk.export",
+        "description": "csv.DictWriter is built with the default excel dialect and QUOTE_MINIMAL. writerows on the next lines writes the approved claim, including a claim that starts with =, with no formula-neutralizing prefix."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "research_desk/store.py",
+        "line": 165,
+        "description": "DictWriter is constructed with fieldnames EXPORT_COLUMNS and lineterminator newline only. There is no quoting override, escape character, or prefix for a leading equals sign."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 167,
+        "description": "writerows writes the approved row dicts, whose claim value is the stored string, into the CSV buffer returned as text."
+      },
+      {
+        "file": "docs/security-audit/2026-10-19/agents/verifier-csv/artifacts/boundary-report.json",
+        "line": 8,
+        "description": "csv_text second data row has an unquoted claim cell =1+1, quote text ordinary quote, https source URLs, and only the approved rows."
+      },
+      {
+        "file": "skills/research-desk/SKILL.md",
+        "line": 19,
+        "description": "The agent is told to call add_finding with a short standalone claim and a short verbatim quote copied from the source page."
+      },
+      {
+        "file": "README.md",
+        "line": 7,
+        "description": "Approved findings are documented as CSV ready for a spreadsheet, so formula selection would be behavior of that later spreadsheet."
+      }
+    ],
+    "blockers": [
+      "Spreadsheet evaluation of the exported claim cell =1+1 was not run. This environment has no spreadsheet engine, and selecting a leading equals as a formula is behavior of that spreadsheet after Research Desk has written the CSV text."
+    ],
+    "validation_plan": {
+      "local": "Repeat Desk.export with format csv for one approved finding whose claim is the five characters =1+1 and whose quote is ordinary quote. Confirm the claim cell is unquoted and has no prefix, and that a still-pending row is absent. Do not open the text in a spreadsheet. That comparison already matches the artifact and does not decide formula selection.",
+      "deployment": "On the operator's own computer, open that exported CSV in the spreadsheet already used for Research Desk exports and record whether the claim cell whose text is =1+1 is calculated or shown as literal text, including the application name. Keep the file local."
+    }
+  },
+  {
+    "verdict": "needs_validation",
+    "fingerprint": "research_desk/store.py:default_home/desk.db-file-mode",
+    "title": "Default research database is created without a private file mode",
+    "description": "Desk creates the default data directory with Path.mkdir's default mode and opens desk.db with sqlite3.connect without a chmod. Under umask 022 the promoted artifact records that directory as 0o755 and desk.db as 0o644. A different local OS user can read that file only when every ancestor directory is traversable. The sandbox parent was a harness directory at 0755, the real operator home mode was not measured, and no second OS account opened the file.",
+    "claimed_root_cause": "Desk.__init__ creates the default data directory with Path.mkdir's default mode and opens desk.db through sqlite3.connect without chmod, so confidentiality is left to umask and ancestor modes.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 40,
+        "scope": "call",
+        "description": "MCP tool dispatch calls api.status() with no database argument. Every other branch of call does the same. bin/research-desk line 29 passes a.db, which is None when --db is omitted, into those same API functions, so both interfaces reach Desk with db_path None."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/api.py",
+        "line": 12,
+        "scope": "_with",
+        "description": "_with constructs Desk(db). Public API functions default db to None, so an omitted path selects the default database."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 71,
+        "scope": "Desk.__init__",
+        "description": "When db_path is None, Desk.__init__ resolves default_home and uses that directory for desk.db. An explicit db_path skips this branch."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 54,
+        "scope": "default_home",
+        "description": "default_home returns RESEARCH_DESK_HOME when set. Otherwise it selects XDG_DATA_HOME or Path.home()/.local/share, then research-desk. The mode measurement set RESEARCH_DESK_HOME and did not exercise the home fallback."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 73,
+        "scope": "Desk.__init__",
+        "description": "home.mkdir(parents=True, exist_ok=True) supplies no mode, so Path.mkdir's default 0o777 is masked by the process umask. Existing ancestor directories, including a real home, keep their current mode."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 76,
+        "scope": "Desk.__init__",
+        "description": "sqlite3.connect(self.path) creates desk.db when absent. The following lines set row_factory and run SCHEMA, and no chmod is applied to the new file."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "research_desk/store.py",
+        "line": 55,
+        "description": "RESEARCH_DESK_HOME is returned unchanged. The sandbox called Desk with that variable set under a harness parent created at 0755."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 57,
+        "description": "The unconfigured location is XDG_DATA_HOME or Path.home()/.local/share. This repository does not set or record the mode of that home or of pre-existing ancestors."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 73,
+        "description": "The data directory is created with mkdir's default mode. The code's own directory in the promoted run was 0o755 under umask 022."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 76,
+        "description": "sqlite3.connect is the creation sink for desk.db. Source contains no chmod, no mode argument, and no other permission call on this path."
+      },
+      {
+        "file": "docs/security-audit/2026-10-19/agents/verifier-dbmode/artifacts/boundary-report.json",
+        "line": 3,
+        "description": "Promoted artifact records data_dir_mode 0o755 for the directory the code created under umask 022."
+      },
+      {
+        "file": "docs/security-audit/2026-10-19/agents/verifier-dbmode/artifacts/boundary-report.json",
+        "line": 4,
+        "description": "Promoted artifact records desk_db_mode 0o644. It does not record a second OS account opening the file or a stat of a real operator home."
+      }
+    ],
+    "blockers": [
+      "The promoted artifact records data_dir_mode 0o755 and desk_db_mode 0o644 under umask 022, and no second OS account opened desk.db, so a cross-user read was not observed.",
+      "The real operator home directory mode was not measured. default_home's unconfigured path is under Path.home()/.local/share or XDG_DATA_HOME, while the sandbox parent at 0755 was created by the harness. Whether another local OS user can traverse to the 0644 file depends on that unmeasured ancestor mode."
+    ],
+    "validation_plan": {
+      "local": "On a disposable two-uid fixture, with umask 022, create one parent at mode 0700 and another at mode 0755. Set RESEARCH_DESK_HOME to a new subdirectory of each, construct Desk() with no db path, and have the second uid attempt only to open each resulting desk.db. Record EACCES or a successful open. Use empty databases and leave the operator home untouched.",
+      "deployment": "The owner runs stat -c %a on $HOME, $HOME/.local, $HOME/.local/share, and on $XDG_DATA_HOME and $RESEARCH_DESK_HOME when set, and reports whether a different local account can traverse that chain to the default desk.db. Leave modes unchanged and do not print database contents."
+    }
+  },
+  {
+    "verdict": "needs_validation",
+    "fingerprint": "research_desk/store.py:sql_literal:one-encoder-vs-bigquery-string-rules",
+    "title": "BigQuery export reuses apostrophe-only SQL quoting",
+    "description": "sql_literal is the only SQL value encoder in the repository. It single-quotes strings and doubles apostrophes, and it copies a backslash and a newline into that quoted text. to_sql calls it for every accepted dialect, including bigquery. The bigquery dialect map supplies the column types INT64 and STRING. README.md, SECURITY.md, and the review-and-export skill describe that dialect switch as a column-type change and describe every exported value as a SQL string literal. tests/test_desk.py executes a generated script with sqlite3 for dialect sqlite, and the bounded artifact's ordinary sqlite claims stayed stored data. The repository has no BigQuery lexer. The unresolved fact is whether each observed spelling is one complete string token, a syntax error, or an early end of the literal inside the same INSERT. No BigQuery execution was observed.",
+    "claimed_root_cause": "Dialect bigquery is rendered by the same sql_literal encoder as every other dialect: single quotes with each apostrophe doubled, a backslash copied, and a newline copied. DIALECTS selects only INT64 and STRING for that name. The product documents this as a SQL string literal and as a column-type-only dialect. Source does not show how a BigQuery lexer classifies those bytes.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 43,
+        "scope": "call",
+        "description": "tools/call add_finding passes the caller-supplied claim and quote to api.add_finding. The server instructions tell the agent to store fetched page text through this tool."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/api.py",
+        "line": 39,
+        "scope": "add_finding",
+        "description": "api.add_finding opens the local desk and calls Desk.add_finding with that claim and quote."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 111,
+        "scope": "Desk.add_finding",
+        "description": "Desk.add_finding strips the claim and quote and stores them with a parameterized INSERT. check_url requires an http(s) scheme and a netloc and returns the URL with no quote or backslash scrub."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 139,
+        "scope": "Desk._decide",
+        "description": "approve writes status approved, the note, and decided_at with a parameterized UPDATE. Only that status is eligible for export."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 152,
+        "scope": "Desk.approved_rows",
+        "description": "approved_rows returns the approved goal title, claim, source_url, quote, note, and decided_at as the export row."
+      },
+      {
+        "kind": "propagation",
+        "file": "server/mcp_server.py",
+        "line": 47,
+        "scope": "call",
+        "description": "tools/call export_sql passes the caller-selected dialect to api.export. The tool schema lists bigquery as a dialect."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/api.py",
+        "line": 55,
+        "scope": "export",
+        "description": "api.export forwards the dialect unchanged into Desk.export and returns the generated text."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 172,
+        "scope": "Desk.export",
+        "description": "Desk.export loads approved_rows and, for format sql, sets the result text to to_sql(rows, table, dialect)."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 195,
+        "scope": "to_sql",
+        "description": "to_sql keeps bigquery because it is a DIALECTS key, uses that key for column types, and passes every export column through sql_literal."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 196,
+        "scope": "to_sql",
+        "description": "The INSERT statement is assembled from those sql_literal results, so the quoted claim, quote, note, goal title, and source_url become part of the script text."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "research_desk/store.py",
+        "line": 180,
+        "description": "sql_literal returns NULL for None, digits for an int, and a single-quoted string whose apostrophes are doubled. This is the only function in the repository that quotes export values."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 41,
+        "description": "The bigquery dialect entry maps int to INT64 and text to STRING and contains no escape rule."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 186,
+        "description": "to_sql rejects a dialect outside DIALECTS, then uses the selected entry as the type map for the CREATE TABLE column list."
+      },
+      {
+        "file": "README.md",
+        "line": 73,
+        "description": "The README states that dialect changes column types only, with bigquery using INT64 and STRING, and that strings are escaped as standard SQL literals."
+      },
+      {
+        "file": "SECURITY.md",
+        "line": 3,
+        "description": "SECURITY.md states that table names are plain identifiers and that every value is escaped as a SQL string literal, and that the export is text run elsewhere."
+      },
+      {
+        "file": "skills/review-and-export/SKILL.md",
+        "line": 16,
+        "description": "The export skill lists bigquery with postgres, sqlite, and snowflake as a dialect that changes column types only."
+      },
+      {
+        "file": "tests/test_desk.py",
+        "line": 71,
+        "description": "test_export_only_approved_and_sql_runs builds the script with dialect sqlite and runs it with sqlite3.executescript, expecting the stored row back."
+      },
+      {
+        "file": "tests/test_desk.py",
+        "line": 85,
+        "description": "The bigquery export assertion checks that the generated text contains the type name STRING."
+      },
+      {
+        "file": "docs/security-audit/2026-10-19/agents/verifier-bq/artifacts/boundary-report.json",
+        "line": 9,
+        "description": "The sandbox artifact records sql_literal of O'Reilly as a quoted value with a doubled apostrophe."
+      },
+      {
+        "file": "docs/security-audit/2026-10-19/agents/verifier-bq/artifacts/boundary-report.json",
+        "line": 10,
+        "description": "sql_literal_backslash_quote is the encoder output for a value that is x, one backslash, and one apostrophe."
+      },
+      {
+        "file": "docs/security-audit/2026-10-19/agents/verifier-bq/artifacts/boundary-report.json",
+        "line": 11,
+        "description": "sql_literal_newline_has_raw_nl is true, so a newline remains raw inside the quotes. The artifact contains no BigQuery parse result."
+      }
+    ],
+    "blockers": [
+      "No file in this repository states a BigQuery string-literal grammar, so the encoder bytes cannot be classified from source as one complete string token, a syntax error, or an early end of the literal.",
+      "The promoted artifact records the apostrophe spelling, the backslash-apostrophe spelling, a raw newline, generated INSERT excerpts, and a sqlite readback of ordinary claims. A BigQuery parse is absent, so the syntax-error versus early-end distinction is unobserved.",
+      "tests/test_desk.py executes export text only with sqlite3 and only for dialect sqlite. The bigquery assertion checks for the type name STRING."
+    ],
+    "validation_plan": {
+      "local": "In scratch, run a throwaway lexer on only the three spellings sql_literal already emits for one approved row: the doubled-apostrophe form, the backslash-then-apostrophe form recorded as sql_literal_backslash_quote, and a quoted value that still contains a raw newline. Point the lexer at a BigQuery string production that is already on local disk. For each spelling, record one outcome: one complete string token whose decoded characters equal the original value; a syntax error that rejects the statement; or an early end, where the opening quote closes before the encoder's final quote and leftover tokens remain inside that same INSERT.",
+      "deployment": "Create a throwaway empty dataset that holds no production tables. Export one approved row with dialect bigquery whose string values contain an apostrophe, a backslash followed by an apostrophe, and a newline. Submit that export's CREATE TABLE and its one INSERT. Record whether the job reports a syntax error before any row is written, writes a cell equal to the original characters, or ends the literal before the encoder's closing quote while still parsing that same statement. Keep the job on that empty dataset."
+    }
+  }
+]

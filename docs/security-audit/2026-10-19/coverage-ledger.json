@@ -1,0 +1,1567 @@
+[
+  {
+    "coverage_id": ".cursor-plugin%2Fplugin.json::repository%23stdlib-only%20release%20inputs::.cursor-plugin::SUPPLY-CHAIN-AND-RELEASE.md%23Mutable%20and%20unbound%20build%20inputs",
+    "canonical_refs": {
+      "surface": ".cursor-plugin/plugin.json",
+      "boundary": "repository#stdlib-only release inputs",
+      "subsystem": ".cursor-plugin",
+      "attack_class": "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs"
+    },
+    "surface": ".cursor-plugin/plugin.json",
+    "boundary": "repository#stdlib-only release inputs",
+    "subsystem": ".cursor-plugin",
+    "attack_class": "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs",
+    "starting_paths": [
+      ".cursor-plugin/plugin.json",
+      ".cursor-plugin/marketplace.json",
+      "mcp.json",
+      ".gitignore",
+      "research_desk/__init__.py"
+    ],
+    "ordinary_attack_class_block": null,
+    "selected_companion_blocks": [
+      "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Universal moves",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Validation rules",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Build-context inclusion",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Plugin and extension trust expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Untrusted code in a privileged workflow",
+        "reason": "The repository contains no CI workflow, signing step, or release token."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-meta",
+    "reviewed_paths": [
+      ".cursor-plugin/plugin.json",
+      ".cursor-plugin/marketplace.json",
+      ".gitignore",
+      "mcp.json",
+      "research_desk/__init__.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-meta",
+        "reviewed_paths": [
+          ".cursor-plugin/plugin.json",
+          ".cursor-plugin/marketplace.json",
+          ".gitignore",
+          "mcp.json",
+          "research_desk/__init__.py"
+        ],
+        "invariant": "Release inputs are local static files. No mutable ref is consumed by an in-repo build.",
+        "method": "source",
+        "result": "No requirements, lockfile, submodule, Dockerfile, CI workflow, or signature. mcp.json runs host python3 on the in-repo server. No lower-trust writer reaches a build.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "python3 on PATH is unpinned. There is no in-repo build that consumes a floating ref. No CI means hosted branch protection is not source-visible."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23--db::research_desk%2Fstore.py%23Desk.__init__::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "bin/research-desk#--db",
+      "boundary": "research_desk/store.py#Desk.__init__",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "bin/research-desk#--db",
+    "boundary": "research_desk/store.py#Desk.__init__",
+    "subsystem": "bin/research-desk",
+    "attack_class": "ATTACK-CLASSES.md#Resource and file handling",
+    "starting_paths": [
+      "bin/research-desk",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-files",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-files",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "--db opens sqlite3.connect on the operator path with URI mode off.",
+        "method": "source",
+        "result": "Optional --db is passed to Desk. sqlite3.connect leaves uri false, so a file: query is a filename. The operator path uses the process uid. Symlink follow and creat mode matter only if that parent is writable by another local user.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "--db is an operator-selected database path, not a second principal."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23argv::bin%2Fresearch-desk%23argument%20parsing%20without%20a%20shell::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "bin/research-desk#argv",
+      "boundary": "bin/research-desk#argument parsing without a shell",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "bin/research-desk#argv",
+    "boundary": "bin/research-desk#argument parsing without a shell",
+    "subsystem": "bin/research-desk",
+    "attack_class": "ATTACK-CLASSES.md#Injection",
+    "starting_paths": [
+      "bin/research-desk",
+      "skills/research-desk/SKILL.md",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-meta",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "skills/research-desk/SKILL.md",
+      "tests/test_desk.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-meta",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/research-desk/SKILL.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "Product code parses argv with argparse and does not invoke a shell.",
+        "method": "source",
+        "result": "No os.system, subprocess, eval, or exec in product modules. Skill shell examples are host instructions. tests subprocess.run uses an argument list. scripts/e2e.sh is not imported by the server.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "Skill examples quote goal and note for a host shell. This repository does not build that command."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23export%20--out::research_desk%2Fapi.py%23export%20file%20write::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "bin/research-desk#export --out",
+      "boundary": "research_desk/api.py#export file write",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "bin/research-desk#export --out",
+    "boundary": "research_desk/api.py#export file write",
+    "subsystem": "bin/research-desk",
+    "attack_class": "ATTACK-CLASSES.md#Resource and file handling",
+    "starting_paths": [
+      "bin/research-desk",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+        "reason": "CLI argv is the operator process, not a model tool argument. MCP out_path is a separate unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-files",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-files",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "CLI --out writes only the operator-supplied path.",
+        "method": "source",
+        "result": "argparse passes --out to api.export with no shell. Omitting --out returns JSON and writes no file. Same sink and same-uid limit as MCP out_path.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "CLI --out shares the api.export sink and does not default to a shared directory."
+    ]
+  },
+  {
+    "coverage_id": "repository%23tracked%20source::repository%23dangerous%20calls%20and%20committed%20secrets::repository::ATTACK-CLASSES.md%23Obvious%20things",
+    "canonical_refs": {
+      "surface": "repository#tracked source",
+      "boundary": "repository#dangerous calls and committed secrets",
+      "subsystem": "repository",
+      "attack_class": "ATTACK-CLASSES.md#Obvious things"
+    },
+    "surface": "repository#tracked source",
+    "boundary": "repository#dangerous calls and committed secrets",
+    "subsystem": "repository",
+    "attack_class": "ATTACK-CLASSES.md#Obvious things",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "SECURITY.md",
+      ".gitignore"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Obvious things",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-meta",
+    "reviewed_paths": [
+      ".gitignore",
+      "assets/logo.svg",
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "tests/test_desk.py",
+      "SECURITY.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-meta",
+        "reviewed_paths": [
+          ".gitignore",
+          "assets/logo.svg",
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "tests/test_desk.py",
+          "SECURITY.md"
+        ],
+        "invariant": "Tracked source has no committed credential, security TODO, debug backdoor, or remote stack disclosure.",
+        "method": "source",
+        "result": "No password, token, or private key. Contact email is public. No HTTP server, cookie, CORS, or open redirect. executescript runs the constant SCHEMA. MCP errors return str(e) to the same OS user without a traceback. subprocess exists only in tests as an argument vector.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "MCP broad handler returns str(e) to the local stdio peer. CLI DeskError is JSON to the same user. .gitignore does not name id_rsa, but no such file is tracked."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23add_finding%20stored%20text::research_desk%2Fstore.py%23sql_literal::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Chained%20vulnerabilities%20and%20trust%20boundaries",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#add_finding stored text",
+      "boundary": "research_desk/store.py#sql_literal",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries"
+    },
+    "surface": "research_desk/store.py#add_finding stored text",
+    "boundary": "research_desk/store.py#sql_literal",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+    "starting_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "SECURITY.md",
+      "tests/test_desk.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-export",
+    "reviewed_paths": [
+      "README.md",
+      "SECURITY.md",
+      "examples/harborline/expected-export.sql",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "skills/review-and-export/SKILL.md",
+      "tests/test_desk.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "SECURITY.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "Stored claim, quote, url, note, and goal title remain data when sql_literal embeds them for SQLite.",
+        "method": "source",
+        "result": "Local INSERT and note UPDATE are parameterized. sql_literal then doubles apostrophes. The sqlite test payload stays data.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "examples/harborline/expected-export.sql",
+          "README.md",
+          "research_desk/store.py"
+        ],
+        "invariant": "That quoting guarantee matches each named dialect.",
+        "method": "source",
+        "result": "sqlite, postgres, and snowflake standard literals match apostrophe doubling. BigQuery's published rules differ and are not vendored. Same fingerprint as the injection unit.",
+        "artifact": null
+      },
+      {
+        "agent_id": "verifier-bq",
+        "reviewed_paths": [
+          "README.md",
+          "SECURITY.md",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/review-and-export/SKILL.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "sql_literal output is one complete string literal for dialect bigquery.",
+        "method": "local",
+        "result": "sql_literal doubles apostrophes and copies a backslash and a newline. The promoted artifact records those three spellings and a sqlite readback of ordinary claims. No BigQuery lexer is in the repository, so token classification stays unresolved.",
+        "artifact": "agents/verifier-bq/artifacts/boundary-report.json"
+      }
+    ],
+    "result_fingerprints": [
+      "research_desk/store.py:sql_literal:one-encoder-vs-bigquery-string-rules"
+    ],
+    "unresolved": [],
+    "hardening": []
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23add_finding::research_desk%2Fstore.py%23to_sql::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#add_finding",
+      "boundary": "research_desk/store.py#to_sql",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "research_desk/store.py#add_finding",
+    "boundary": "research_desk/store.py#to_sql",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Injection",
+    "starting_paths": [
+      "research_desk/store.py",
+      "tests/test_desk.py",
+      "SECURITY.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-export",
+    "reviewed_paths": [
+      "README.md",
+      "SECURITY.md",
+      "examples/harborline/expected-export.sql",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "skills/review-and-export/SKILL.md",
+      "tests/test_desk.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "SECURITY.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "Export values stay inside standard SQL string literals and the table name stays inside IDENT.",
+        "method": "source",
+        "result": "to_sql rejects non-IDENT table names. sql_literal doubles apostrophes and copies backslash and newline. tests/test_desk.py expects sqlite3.executescript to keep an apostrophe, semicolon, DROP TABLE text, and a newline as data for dialect sqlite. approved_rows is the only row source.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "examples/harborline/expected-export.sql",
+          "README.md",
+          "research_desk/store.py"
+        ],
+        "invariant": "The same sql_literal encoding is safe for every named dialect.",
+        "method": "source",
+        "result": "Dialect selection changes INTEGER/TEXT versus INT64/STRING only. README says strings are standard SQL literals. BigQuery's published backslash string rules are not in the repo, so whether those bytes are one literal is unresolved.",
+        "artifact": null
+      },
+      {
+        "agent_id": "verifier-bq",
+        "reviewed_paths": [
+          "README.md",
+          "SECURITY.md",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/review-and-export/SKILL.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "sql_literal output is one complete string literal for dialect bigquery.",
+        "method": "local",
+        "result": "sql_literal doubles apostrophes and copies a backslash and a newline. The promoted artifact records those three spellings and a sqlite readback of ordinary claims. No BigQuery lexer is in the repository, so token classification stays unresolved.",
+        "artifact": "agents/verifier-bq/artifacts/boundary-report.json"
+      }
+    ],
+    "result_fingerprints": [
+      "research_desk/store.py:sql_literal:one-encoder-vs-bigquery-string-rules"
+    ],
+    "unresolved": [],
+    "hardening": [
+      "CREATE TABLE IF NOT EXISTS plus INSERT repeats rows if the same operator runs the script twice."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23approved_rows::research_desk%2Fstore.py%23status%20approved%20filter::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Business%20logic",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#approved_rows",
+      "boundary": "research_desk/store.py#status approved filter",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Business logic"
+    },
+    "surface": "research_desk/store.py#approved_rows",
+    "boundary": "research_desk/store.py#status approved filter",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Business logic",
+    "starting_paths": [
+      "research_desk/store.py",
+      "tests/test_desk.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Business logic",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Soft-delete and tombstone bypass"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Retention and queued-work overrun",
+        "reason": "There is no queue, job, or backup worker. Discard keeps the row in SQLite by design and does not promise deletion."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-export",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "SECURITY.md",
+      "tests/test_desk.py",
+      "skills/review-and-export/SKILL.md",
+      "research_desk/api.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "SECURITY.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "Exports include a finding only when status is approved.",
+        "method": "source",
+        "result": "approved_rows hardcodes status = 'approved'. The schema CHECK allows only pending, approved, and discarded. The sqlite export test expects discarded and pending claims to be absent.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "skills/review-and-export/SKILL.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "A pending finding moves to approved or discarded once.",
+        "method": "source",
+        "result": "_decide raises unless status is pending. Tests expect a second decision to fail. No second status writer exists.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A batch approve that fails on a later id does not export ids that were not updated.",
+        "method": "source",
+        "result": "Each approve commits before the next id. A later DeskError leaves earlier requested ids approved and leaves the failed tail unchanged. Export still filters on approved.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "Batch approve is not atomic. Earlier ids in the same call stay approved if a later id fails. Those earlier ids were requested. Re-running an export inserts duplicate rows for the same operator."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23check_url::research_desk%2Fstore.py%23add_finding%20source_url::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#check_url",
+      "boundary": "research_desk/store.py#add_finding source_url",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "research_desk/store.py#check_url",
+    "boundary": "research_desk/store.py#add_finding source_url",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Resource and file handling",
+    "starting_paths": [
+      "research_desk/store.py",
+      "tests/test_desk.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#API-key and mTLS attack classes",
+        "reason": "source_url is stored and exported. No code fetches it, so there is no SSRF client to attach credentials to."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-files",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "tests/test_desk.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-files",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "tests/test_desk.py"
+        ],
+        "invariant": "source_url is stored after an http(s) scheme and netloc check and is never fetched.",
+        "method": "source",
+        "result": "check_url strips and urlparses. add_finding is the only caller and binds the string as a SQL parameter. No urlopen, socket client, or subprocess fetch exists. file: and javascript: are rejected by tests and by the scheme check. http(s) URLs with userinfo, loopback, or a newline are accepted and stored, not dereferenced.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "check_url accepts any http(s) netloc, including userinfo and loopback, and stores the string. Nothing fetches it."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23default_home::research_desk%2Fstore.py%23Desk%20database%20file%20mode::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Cryptography%20and%20secrets",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#default_home",
+      "boundary": "research_desk/store.py#Desk database file mode",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets"
+    },
+    "surface": "research_desk/store.py#default_home",
+    "boundary": "research_desk/store.py#Desk database file mode",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets",
+    "starting_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Cryptography and secrets",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Analytics, logs, traces, and diagnostics as alternate readers"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Missing tenant or owner enforcement",
+        "reason": "There is no tenant id. One local database is the product, not a missing tenant predicate."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-files",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-files",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "The default database directory and desk.db are created with a private mode.",
+        "method": "source",
+        "result": "Desk() with db None uses default_home, mkdir without a mode, and sqlite3.connect without chmod. MCP never passes a db path. Effective mode depends on umask and ancestor directory modes, which are outside source. No hardcoded secret and no crypto API on this path.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-files",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "No hardcoded secret or crypto fail-open on the store path.",
+        "method": "source",
+        "result": "store.py and api.py have no credential literal and no cryptographic primitive. Plaintext SQLite is the product.",
+        "artifact": null
+      },
+      {
+        "agent_id": "verifier-dbmode",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "The default database directory and desk.db are created with a private mode.",
+        "method": "local",
+        "result": "Re-read default_home and Desk.__init__. Under umask 022 the promoted artifact records data_dir_mode 0o755 and desk_db_mode 0o644. Source has no chmod. No second account opened the file, and the real home mode was not measured.",
+        "artifact": "agents/verifier-dbmode/artifacts/boundary-report.json"
+      }
+    ],
+    "result_fingerprints": [
+      "research_desk/store.py:default_home/desk.db-file-mode"
+    ],
+    "unresolved": [],
+    "hardening": [
+      "Absence of encryption is the product. The private-mode gap is the candidate."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23export%20format%3Dcsv::research_desk%2Fstore.py%23csv.DictWriter::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#export format=csv",
+      "boundary": "research_desk/store.py#csv.DictWriter",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "research_desk/store.py#export format=csv",
+    "boundary": "research_desk/store.py#csv.DictWriter",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "starting_paths": [
+      "research_desk/store.py",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-export",
+    "reviewed_paths": [
+      "README.md",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md",
+      "tests/test_desk.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "tests/test_desk.py"
+        ],
+        "invariant": "CSV export contains only approved rows.",
+        "method": "source",
+        "result": "format csv writes approved_rows only. The status predicate remains when goal_id is set.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-export",
+        "reviewed_paths": [
+          "README.md",
+          "research_desk/store.py",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "CSV cells are not selected as spreadsheet formulas because of their first character.",
+        "method": "source",
+        "result": "DictWriter uses default QUOTE_MINIMAL. A leading equals, plus, minus, or at-sign without comma or quote is emitted unchanged. source_url is http(s). No spreadsheet engine is in the repo.",
+        "artifact": null
+      },
+      {
+        "agent_id": "verifier-csv",
+        "reviewed_paths": [
+          "README.md",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/research-desk/SKILL.md"
+        ],
+        "invariant": "CSV cells are not selected as spreadsheet formulas because of their first character.",
+        "method": "local",
+        "result": "csv.DictWriter uses default QUOTE_MINIMAL. The promoted artifact csv_text has an unquoted claim cell =1+1 and only approved rows. Spreadsheet formula selection was not run.",
+        "artifact": "agents/verifier-csv/artifacts/boundary-report.json"
+      }
+    ],
+    "result_fingerprints": [
+      "research_desk/store.py:csv.DictWriter:no-formula-prefix"
+    ],
+    "unresolved": [],
+    "hardening": []
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23load_demo::examples%2Fharborline%2Fgoal.json%23fixed%20demo%20path::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Wildcard",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#load_demo",
+      "boundary": "examples/harborline/goal.json#fixed demo path",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Wildcard"
+    },
+    "surface": "research_desk/store.py#load_demo",
+    "boundary": "examples/harborline/goal.json#fixed demo path",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "ATTACK-CLASSES.md#Wildcard",
+    "starting_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "examples/harborline/goal.json"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Wildcard",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-meta",
+    "reviewed_paths": [
+      "examples/harborline/goal.json",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "bin/research-desk"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-meta",
+        "reviewed_paths": [
+          "examples/harborline/goal.json",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "bin/research-desk"
+        ],
+        "invariant": "Demo load reads only the fixed package goal.json and inserts pending drafts through add_finding.",
+        "method": "source",
+        "result": "api.DEMO is a constant. CLI and MCP accept no demo path. check_url still applies. goal.json uses https .example URLs. Replacing the file requires write access to the plugin tree.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "A bad URL later in goal.json can leave earlier pending rows because each insert commits. Callers cannot choose the path."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23handle%20tools%2Fcall::server%2Fmcp_server.py%23inputSchema%20key%20check::server%2Fmcp_server.py::PROTOCOLS-RPC-AND-MESSAGING.md%23Message%20boundary%20and%20canonicalization%20disagreement",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#handle tools/call",
+      "boundary": "server/mcp_server.py#inputSchema key check",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "PROTOCOLS-RPC-AND-MESSAGING.md#Message boundary and canonicalization disagreement"
+    },
+    "surface": "server/mcp_server.py#handle tools/call",
+    "boundary": "server/mcp_server.py#inputSchema key check",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "PROTOCOLS-RPC-AND-MESSAGING.md#Message boundary and canonicalization disagreement",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Universal moves",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Validation rules",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Message boundary and canonicalization disagreement",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Union, enum, and default confusion",
+      "AI-AND-LLM.md#Tool-schema and dispatcher disagreement",
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Broker and queue isolation attack classes",
+        "reason": "No broker, topic, or queue. Transport is a single stdio pipe."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-mcp",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "server/mcp_server.py"
+        ],
+        "invariant": "One JSON-RPC line stays one message and tool text cannot forge a second method.",
+        "method": "source",
+        "result": "json.loads per line and json.dumps per response. Embedded newlines in stored fields are escaped. Unknown protocolVersion falls back to 2025-06-18 and does not grant capability.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "Schema and handler disagreements do not change the principal or the authorization decision.",
+        "method": "source",
+        "result": "handle() checks required and extra keys only. Unknown status, format, and dialect are rejected in store.py. int() coercion of JSON true or 1.9 still selects a row the same caller can name as an integer. A falsy status lists every row, which status all already allows.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "MCP schema types and enums are not enforced in handle(); the store rejects unknown status, format, and dialect. int() coercion does not cross a principal."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23tools%2Fcall%20add_finding::research_desk%2Fstore.py%23add_finding%20unbounded%20text::research_desk%2Fstore.py::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Unbounded%20buffering%20and%20cardinality",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#tools/call add_finding",
+      "boundary": "research_desk/store.py#add_finding unbounded text",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality"
+    },
+    "surface": "server/mcp_server.py#tools/call add_finding",
+    "boundary": "research_desk/store.py#add_finding unbounded text",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": null,
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+        "reason": "There is no shared multi-tenant service. Work runs in the operator's own process."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-mcp",
+    "reviewed_paths": [
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "Unbounded text is an availability defect only if it hits another principal or a shared service.",
+        "method": "source",
+        "result": "claim, quote, url, note, and title have no length cap. Bytes stay in the operator process and that user's desk.db. No shared service is on the path.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "No length cap on claim, quote, note, title, or the MCP stdin line. Impact is the operator's own disk."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23tools%2Fcall%20approve::research_desk%2Fstore.py%23_decide::server%2Fmcp_server.py::AI-AND-LLM.md%23Action-confirmation%20and%20approval%20binding",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#tools/call approve",
+      "boundary": "research_desk/store.py#_decide",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "AI-AND-LLM.md#Action-confirmation and approval binding"
+    },
+    "surface": "server/mcp_server.py#tools/call approve",
+    "boundary": "research_desk/store.py#_decide",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "AI-AND-LLM.md#Action-confirmation and approval binding",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Action-confirmation and approval binding",
+      "AI-AND-LLM.md#Indirect injection through retrieved or ingested content"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "AI-AND-LLM.md#MCP server and tool identity confusion",
+        "reason": "One local server, fixed tool names, and responses are correlated by the JSON-RPC id on the same stdio pipe."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-mcp",
+    "reviewed_paths": [
+      "README.md",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "tools/call approve cannot move findings outside the process uid's database.",
+        "method": "source",
+        "result": "No user id on stdio. _decide updates the single SQLite file of the launching OS user. Direct approve is that principal's own authority.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "README.md",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/research-desk/SKILL.md",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "Approve applies only to ids the operator explicitly named, not ids chosen from stored quote text.",
+        "method": "source",
+        "result": "The human-decision rule is tool description, initialize instructions, and the review skill. _decide commits any pending id the caller sends. Whether stored text causes an unrequested approve is host-model behavior outside the repo.",
+        "artifact": null
+      },
+      {
+        "agent_id": "verifier-approve",
+        "reviewed_paths": [
+          "README.md",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "Approve applies only to ids the operator explicitly named, not ids chosen from stored quote text.",
+        "method": "source",
+        "result": "list_pending returns stored claim, quote, and source_url. approve and discard update any still-pending caller id. The explicit-decision rule is prompt and skill text. Host model behavior was not observed.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "research-desk.mcp.approve.prompt-only-binding"
+    ],
+    "unresolved": [],
+    "hardening": []
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23tools%2Fcall%20export_sql::research_desk%2Fapi.py%23export%20file%20write::research_desk%2Fapi.py::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#tools/call export_sql",
+      "boundary": "research_desk/api.py#export file write",
+      "subsystem": "research_desk/api.py",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "server/mcp_server.py#tools/call export_sql",
+    "boundary": "research_desk/api.py#export file write",
+    "subsystem": "research_desk/api.py",
+    "attack_class": "ATTACK-CLASSES.md#Resource and file handling",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-argument injection into a downstream sink"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "AI-AND-LLM.md#Excessive agency and confused-deputy authority",
+        "reason": "The MCP process uid is the operator uid. There is no separate service credential to confuse."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-files",
+    "reviewed_paths": [
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-files",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "export_sql out_path is a same-uid write of approved export text.",
+        "method": "source",
+        "result": "handle() checks required and extra keys, then api.export expanduser-resolves out_path, mkdir parents, and Path.write_text the approved export. No path root, O_NOFOLLOW, or mode. The stdio peer is the process uid. A second local user can plant a symlink only in a directory that uid already chose and that the other user can write. Hunter recorded that as hardening, not a separate principal by default.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hardening": [
+      "Export write has no root, O_NOFOLLOW, or explicit mode. Same-uid write of the given path is the contract. Symlink follow matters only when the parent directory is writable by another local user."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23tools%2Fcall%20list_pending::skills%2Freview-and-export%2FSKILL.md%23approve%20only%20on%20explicit%20decision::skills::AI-AND-LLM.md%23Indirect%20injection%20through%20retrieved%20or%20ingested%20content",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#tools/call list_pending",
+      "boundary": "skills/review-and-export/SKILL.md#approve only on explicit decision",
+      "subsystem": "skills",
+      "attack_class": "AI-AND-LLM.md#Indirect injection through retrieved or ingested content"
+    },
+    "surface": "server/mcp_server.py#tools/call list_pending",
+    "boundary": "skills/review-and-export/SKILL.md#approve only on explicit decision",
+    "subsystem": "skills",
+    "attack_class": "AI-AND-LLM.md#Indirect injection through retrieved or ingested content",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py",
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Indirect injection through retrieved or ingested content",
+      "AI-AND-LLM.md#Prompt role and provenance confusion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#HTTP framing and cache attack classes",
+        "reason": "No HTTP server, client, cookie, cache, or redirect in this repository."
+      },
+      {
+        "block": "CLIENT-SIDE.md#DOM and object-state attack classes",
+        "reason": "No browser DOM, extension page, or webview. assets/logo.svg is a static logo without script."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Workload identity and IAM attack classes",
+        "reason": "No cloud IAM, container, or deployment manifest."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Bounds, integer, and representation attack classes",
+        "reason": "CPython standard library only; no native memory-safety boundary in this repo."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local IPC and exported-component attack classes",
+        "reason": "No Unix socket, XPC, Binder, or D-Bus server. Stdio MCP is covered as JSON-RPC and tool dispatch."
+      },
+      {
+        "block": "AI-AND-LLM.md#Cross-session or cross-tenant context bleed",
+        "reason": "One local database and one stdio session. No retrieval index or second tenant."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-mcp",
+    "reviewed_paths": [
+      "README.md",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/research-desk/SKILL.md",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "Stored quote text returned by list_pending is not itself the user decision approve honors.",
+        "method": "source",
+        "result": "list_findings returns claim, quote, and source_url. The review skill says approve only on an explicit decision. The server does not check that. The effect depends on the host model, so this unit shares the approve binding candidate.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-mcp",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "Stored fields are not parsed as a trusted role.",
+        "method": "source",
+        "result": "Tool results are JSON text fields. The server has no role field and no branch that treats quote text as instructions.",
+        "artifact": null
+      },
+      {
+        "agent_id": "verifier-approve",
+        "reviewed_paths": [
+          "README.md",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "Approve applies only to ids the operator explicitly named, not ids chosen from stored quote text.",
+        "method": "source",
+        "result": "list_pending returns stored claim, quote, and source_url. approve and discard update any still-pending caller id. The explicit-decision rule is prompt and skill text. Host model behavior was not observed.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "research-desk.mcp.approve.prompt-only-binding"
+    ],
+    "unresolved": [],
+    "hardening": []
+  }
+]
