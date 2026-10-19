@@ -133,11 +133,16 @@ class Desk:
         return [dict(r) for r in self.db.execute(q + " ORDER BY id", args)]
 
     def _decide(self, finding_id, status, note=""):
-        f = self.finding(finding_id)
-        if f["status"] != "pending":
+        # One statement, so a second connection cannot commit between the
+        # pending check and the write. rowcount 0 means it was missing or
+        # already decided; finding() preserves today's error text.
+        cur = self.db.execute(
+            "UPDATE findings SET status = ?, note = ?, decided_at = ? WHERE id = ? AND status = 'pending'",
+            (status, (note or "").strip(), now(), int(finding_id)))
+        if cur.rowcount != 1:
+            self.db.rollback()
+            f = self.finding(finding_id)
             raise DeskError(f"finding {finding_id} is already {f['status']}")
-        self.db.execute("UPDATE findings SET status = ?, note = ?, decided_at = ? WHERE id = ?",
-                        (status, (note or "").strip(), now(), int(finding_id)))
         self.db.commit()
         return self.finding(finding_id)
 
@@ -172,12 +177,54 @@ class Desk:
                 "text": to_sql(rows, table, dialect)}
 
 
-def sql_literal(v):
+# Controls these engines treat as backslash escapes, written with the escape
+# the engine documents. Anything else below U+0020 is \u00XX, which both
+# engines accept and which does not swallow the following characters the way
+# \x and octal escapes do.
+# NUL is \u0000, not \0: Snowflake also reads \ooo as octal, so \012 would
+# become a newline instead of NUL followed by the digits 1 and 2.
+_SNOWFLAKE_ESCAPES = {"\b": r"\b", "\f": r"\f", "\n": r"\n", "\r": r"\r", "\t": r"\t"}
+_BIGQUERY_ESCAPES = {"\a": r"\a", "\b": r"\b", "\f": r"\f", "\n": r"\n", "\r": r"\r", "\t": r"\t", "\v": r"\v"}
+
+
+def _escape_backslash_literal(text, simple, quote):
+    parts = []
+    for ch in text:
+        if ch == "\\":
+            parts.append("\\\\")
+        elif ch == "'":
+            parts.append(quote)
+        elif ch in simple:
+            parts.append(simple[ch])
+        elif ord(ch) < 32:
+            parts.append("\\u%04x" % ord(ch))
+        else:
+            parts.append(ch)
+    return "".join(parts)
+
+
+def sql_literal(v, dialect="postgres"):
+    """Encode one SQL value for `dialect`.
+
+    Postgres (standard_conforming_strings on, the server default) and SQLite
+    treat a backslash as an ordinary character, so only quotes are doubled.
+    Snowflake and BigQuery treat a backslash as an escape. Snowflake also
+    accepts a doubled quote. BigQuery does not: '' is two literals jammed
+    together, which is a syntax error, and a quoted string cannot contain a
+    raw newline.
+    """
     if v is None:
         return "NULL"
     if isinstance(v, int):
         return str(v)
-    return "'" + str(v).replace("'", "''") + "'"
+    text = str(v)
+    if dialect in ("postgres", "sqlite"):
+        return "'" + text.replace("'", "''") + "'"
+    if dialect == "snowflake":
+        return "'" + _escape_backslash_literal(text, _SNOWFLAKE_ESCAPES, "''") + "'"
+    if dialect == "bigquery":
+        return "'" + _escape_backslash_literal(text, _BIGQUERY_ESCAPES, "\\'") + "'"
+    raise DeskError("dialect must be one of: " + ", ".join(DIALECTS))
 
 
 def to_sql(rows, table="research_findings", dialect="postgres"):
@@ -192,7 +239,7 @@ def to_sql(rows, table="research_findings", dialect="postgres"):
     out = [f"-- Research Desk export: {len(rows)} approved finding(s). Discarded and pending drafts are not included.",
            f"CREATE TABLE IF NOT EXISTS {table} (\n{cols}\n);"]
     for r in rows:
-        vals = ", ".join(sql_literal(r[c]) for c in EXPORT_COLUMNS)
+        vals = ", ".join(sql_literal(r[c], dialect) for c in EXPORT_COLUMNS)
         out.append(f"INSERT INTO {table} ({', '.join(EXPORT_COLUMNS)}) VALUES ({vals});")
     return "\n".join(out) + "\n"
 
