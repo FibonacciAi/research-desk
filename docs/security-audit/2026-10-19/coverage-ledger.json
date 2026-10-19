@@ -1,0 +1,2721 @@
+[
+  {
+    "coverage_id": ".cursor-plugin%2Fplugin.json%23mcpServers::mcp.json%23command::.cursor-plugin%2Fplugin.json::SUPPLY-CHAIN-AND-RELEASE.md%23Build-context%20inclusion",
+    "canonical_refs": {
+      "surface": ".cursor-plugin/plugin.json#mcpServers",
+      "boundary": "mcp.json#command",
+      "subsystem": ".cursor-plugin/plugin.json",
+      "attack_class": "SUPPLY-CHAIN-AND-RELEASE.md#Build-context inclusion"
+    },
+    "surface": "Plugin manifest and shipped skills",
+    "boundary": "mcp.json command launches the server",
+    "subsystem": ".cursor-plugin/plugin.json",
+    "attack_class": "Build-context inclusion",
+    "starting_paths": [
+      ".cursor-plugin/plugin.json",
+      ".cursor-plugin/marketplace.json",
+      "mcp.json",
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "ordinary_attack_class_block": null,
+    "selected_companion_blocks": [
+      "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Universal moves",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Validation rules",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Build-context inclusion",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Plugin and extension trust expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Untrusted code in a privileged workflow",
+        "reason": "No CI workflow file exists in the repository."
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Workflow command and expression confusion",
+        "reason": "No CI workflow expressions exist."
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Dependency source and namespace confusion",
+        "reason": "No package manifest or resolver config exists; imports are the Python standard library."
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs",
+        "reason": "No build downloads a tool, action, or base image."
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Release authorization and signing-policy gaps",
+        "reason": "No release, signature, or updater consumer exists in source."
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Update metadata and rollback confusion",
+        "reason": "No updater is implemented."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-meta",
+    "reviewed_paths": [
+      ".cursor-plugin/plugin.json",
+      ".cursor-plugin/marketplace.json",
+      "mcp.json",
+      ".gitignore",
+      "server/mcp_server.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          ".cursor-plugin/plugin.json",
+          ".cursor-plugin/marketplace.json",
+          "mcp.json",
+          ".gitignore"
+        ],
+        "invariant": "A plugin install of marketplace source \".\" and plugin mcpServers/skills paths publishes only the tracked tree, and that tree contains no credential, private dataset, or privileged configuration.",
+        "method": "source",
+        "result": "Commit 0faecdf3a417e29194f1505e5a7b51b9d421dcbf is the only commit and adds 24 tracked paths. plugin.json points mcpServers at ./mcp.json and skills at ./skills/; marketplace.json sets source to \".\" with skills \"skills\". The tracked tree is the manifest, two SKILL.md files, the stdlib server and CLI, fictional Harborline examples, tests, and logo assets. No .env, pem, key, credentials file, token, or private config is tracked. .gitignore excludes .env*, netrc, pypirc, npmrc, pem, key, p12, and *.db, and those names are absent from git ls-files. There is no package script, image build, or file allowlist that would copy a different context into an artifact.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "mcp.json",
+          "server/mcp_server.py",
+          ".cursor-plugin/plugin.json"
+        ],
+        "invariant": "The installed MCP command stays the declared same-user server launch, with no install hook or publisher-substitution step that runs before that declaration.",
+        "method": "source",
+        "result": "mcp.json sets command to the literal python3, args to ${CURSOR_PLUGIN_ROOT}/server/mcp_server.py, and cwd to ${CURSOR_PLUGIN_ROOT}. The server inserts its parent directory on sys.path and imports research_desk. No postinstall, hook, or updater file exists. No second publisher identity or mutable digest is consumed. Running the declared server is the plugin's stated purpose for the OS user who installed it.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-meta",
+    "hardening_notes": [
+      ".gitignore does not list the literal filename credentials.json or an extensionless private-key name; no such file is tracked, and the product never writes one.",
+      "bin/research-desk prints DeskError as JSON and leaves any other exception to the interpreter on the invoker's terminal; server/mcp_server.py returns exception text without a traceback. Both stay with the OS user who launched the process."
+    ]
+  },
+  {
+    "coverage_id": ".gitignore%23secret-patterns::SECURITY.md%23Security::.cursor-plugin%2Fplugin.json::ATTACK-CLASSES.md%23Obvious%20things",
+    "canonical_refs": {
+      "surface": ".gitignore#secret-patterns",
+      "boundary": "SECURITY.md#Security",
+      "subsystem": ".cursor-plugin/plugin.json",
+      "attack_class": "ATTACK-CLASSES.md#Obvious things"
+    },
+    "surface": "Repository tree and gitignore",
+    "boundary": "No committed credential file",
+    "subsystem": ".cursor-plugin/plugin.json",
+    "attack_class": "Obvious things",
+    "starting_paths": [
+      ".gitignore",
+      "SECURITY.md",
+      "README.md",
+      "research_desk",
+      "server/mcp_server.py",
+      "bin/research-desk"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Obvious things",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "No browser, DOM, cookie, or CORS surface exists in the repository."
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "No HTTP server, session, OAuth, or API-key verifier exists."
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "No cloud IAM, container, or serverless manifest exists."
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "Implementation is pure Python with no native extension."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-meta",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "server/mcp_server.py",
+      "bin/research-desk",
+      "SECURITY.md",
+      "README.md",
+      ".cursor-plugin/plugin.json",
+      "examples/harborline/goal.json",
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md",
+      ".gitignore",
+      "tests/test_desk.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py",
+          "bin/research-desk",
+          "SECURITY.md",
+          "README.md",
+          ".cursor-plugin/plugin.json",
+          "examples/harborline/goal.json"
+        ],
+        "invariant": "Source and the single git history contain no hardcoded password, API key, token, private key, or production seed credential.",
+        "method": "source",
+        "result": "Case-insensitive search for password, secret, apikey, token, Bearer, BEGIN, and common key prefixes matches only the identifier regex in store.py and subprocess in tests. SECURITY.md, README, and plugin.json contain the public contact heydimitri@mail.grokbot.com. Harborline goal.json uses reserved .example URLs and states the people and numbers are invented. git log --all has one commit and no deleted file. strings on assets/icon-512.png shows no credential text. logo.svg is a static drawing.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py",
+          "bin/research-desk",
+          "skills/research-desk/SKILL.md",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "No TODO, FIXME, HACK, or XXX comment skips authentication or validation, and no debug switch enables extra behavior.",
+        "method": "source",
+        "result": "No TODO, FIXME, HACK, or XXX comment exists in the tracked tree. No DEBUG flag, query parameter, header, or environment variable changes authorization or adds a mode. api.status always returns plan \"free\" as a static label beside version and counts.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          ".gitignore",
+          "server/mcp_server.py",
+          "bin/research-desk"
+        ],
+        "invariant": "Secret filenames are untracked, gitignore covers the secret patterns the product could drop, and there is no unprotected network debug or admin route.",
+        "method": "source",
+        "result": "git ls-files has no .env, .env.local, credentials.json, *.pem, *.key, or *.p12. .gitignore lists .env*, .npmrc, .pypirc, .netrc, *.pem, *.key, *.p12, *.log, and *.db. The product never writes those secret names. There is no HTTP listener, so there is no /debug, /admin, /health, /metrics, /env, or /config route and no CORS, cookie, redirect, or TLS listener. CLI status and the research_desk_status tool return the local database path and counts to the OS user who launched the process.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py",
+          "bin/research-desk",
+          "tests/test_desk.py"
+        ],
+        "invariant": "Application code does not eval, exec, or dynamically import caller input, and failure text stays with the launching user.",
+        "method": "source",
+        "result": "Application modules use static imports. server/mcp_server.py and bin/research-desk insert the repo root on sys.path and then import research_desk. eval, exec, compile, __import__, and importlib do not appear. subprocess appears only in tests/test_desk.py, with argv fixed to this repo's CLI or MCP server. There is no requirements or lockfile; imports are the Python standard library, so there is no dependency resolver to pin. MCP handle returns str(e) for unexpected exceptions and does not format a traceback. The CLI catches DeskError and prints that message; other exceptions use the interpreter default on the invoker's terminal.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-meta",
+    "hardening_notes": [
+      ".gitignore does not list the literal filename credentials.json or an extensionless private-key name; no such file is tracked, and the product never writes one.",
+      "bin/research-desk prints DeskError as JSON and leaves any other exception to the interpreter on the invoker's terminal; server/mcp_server.py returns exception text without a traceback. Both stay with the OS user who launched the process."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23--db::research_desk%2Fstore.py%23Desk.__init__::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "bin/research-desk#--db",
+      "boundary": "research_desk/store.py#Desk.__init__",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "CLI --db",
+    "boundary": "Desk opens the caller SQLite path",
+    "subsystem": "bin/research-desk",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "bin/research-desk",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Credential-store and local-secret boundary mismatch",
+        "reason": "Secret-store comparison is on the default home path unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-file",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-file",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/store.py"
+        ],
+        "invariant": "A caller-supplied --db path is opened as the invoking OS user, with no second principal, and another local user cannot redirect that open unless they can already create the path entry.",
+        "method": "source",
+        "result": "bin/research-desk passes argparse --db through unchanged as Desk(db_path). Desk.__init__ does not mkdir, canonicalize, reject '..', or open with O_NOFOLLOW when db_path is set; it calls sqlite3.connect on that string. The lower-trust principal would be another local OS user. That user cannot choose --db. The process uid is the invoking user, so the write is that user's own sqlite file. No confinement root is declared for --db.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-file",
+        "reviewed_paths": [
+          "research_desk/store.py"
+        ],
+        "invariant": "sqlite3.connect follows a symlink at the caller db path, and a newly created database is mode 0644 under umask 022, but a non-owner cannot plant that symlink in a directory they cannot write.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Sandbox python3 calling Desk(path), umask 022. A new caller.db was mode 0644. A symlink to an existing sqlite file was followed and the goal row was committed in the target. A dangling symlink was followed and the target was created mode 0644. A symlink to a non-database file raised DatabaseError 'file is not a database' and left the target bytes unchanged. An embedded NUL raised ValueError before connect. Created directories in this path are not other-writable (0755), so another local user cannot swap in the symlink. /home/ubuntu is 0750 and group ubuntu has no other members, so other cannot traverse to a db created under the home.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-file",
+    "hardening_notes": [
+      "Desk.__init__ creates a missing default directory chain with Path.mkdir's default mode. Under umask 022 that is 0755 for .local, .local/share, and research-desk, and sqlite3.connect creates desk.db as 0644. chmod 0700 on the directory and 0600 on desk.db after creation would keep the ledger private even if an ancestor were other-executable. On this host /home/ubuntu is 0750 and group ubuntu has no other members, so other cannot read the default file.",
+      "api.export uses Path.mkdir (0755 under umask 022) and Path.write_text, which follows symlinks and creates a 0644 file. Opening with O_NOFOLLOW and O_EXCL, and using mode 0600, would refuse a pre-created symlink in a sticky directory the caller chose and would not leave the export other-readable. The current follow behavior was observed: a symlink planted before export was overwritten with the export body.",
+      "sqlite3.connect follows a database-path symlink: an existing sqlite target receives new rows, and a dangling symlink creates a 0644 file at the target. A non-database target is left unchanged and raises DatabaseError. O_NOFOLLOW on the caller and default paths would close that follow. Another local user cannot plant the link on the default path because the created directories are not other-writable and /home/ubuntu is 0750."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23add-finding::research_desk%2Fstore.py%23sql_literal::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "bin/research-desk#add-finding",
+      "boundary": "research_desk/store.py#sql_literal",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "CLI add-finding then export",
+    "boundary": "sql_literal and to_sql",
+    "subsystem": "bin/research-desk",
+    "attack_class": "Injection",
+    "starting_paths": [
+      "bin/research-desk",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+        "reason": "CLI is the same OS user; MCP add_finding is the tool-argument unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h-inject",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "README.md",
+      "SECURITY.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "CLI claim, quote, goal title, note, and source_url reach export SQL only as data literals, and each named dialect uses an encoder that matches that dialect's string literal rules.",
+        "method": "source",
+        "result": "bin/research-desk main forwards add-finding claim, source_url, and quote to api.add_finding, and export --dialect to api.export. store.add_finding inserts those strings with bound parameters. store._decide stores the approve note the same way. store.to_sql then calls sql_literal for every EXPORT_COLUMNS value. sql_literal wraps strings in single quotes and doubles single quotes; backslashes are unchanged. DIALECTS only supplies INTEGER/TEXT versus INT64/STRING. README says dialect changes column types only and that strings are standard SQL literals. tests/test_desk.py executes the sqlite dialect with an apostrophe and DROP text and expects one data row.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/store.py"
+        ],
+        "invariant": "The same approved quote produces dialect-specific safe literals; sqlite execution keeps the backslash-quote payload inside one column.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Command: sandbox-run.sh h-inject python3 scratch/check4.py (empty env, PATH=/usr/bin:/bin, HOME=scratch, TMPDIR=scratch/tmp, LANG=C.UTF-8, LC_ALL=C.UTF-8, PYTHONDONTWRITEBYTECODE=1, PYTHONNOUSERSITE=1, PYTHONSAFEPATH=1, PYTHONPATH=/workspace, prlimit --as=402653184 --cpu=20 --nproc=32 --fsize=2097152 --nofile=64, timeout 20s). Input: goal Goal, claim =1+1, source_url https://a.example/p, quote x\\', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --, note +2+2, plus a discarded marker row. postgres, sqlite, snowflake, and bigquery each emitted this INSERT with only the CREATE types differing: INSERT INTO research_findings (id, goal_id, goal, claim, source_url, quote, note, approved_at) VALUES (1, 1, 'Goal', '=1+1', 'https://a.example/p', 'x\\'', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --', '+2+2', '2026-10-19T17:42:02Z'); sql_literal of an apostrophe payload was 'It''s ''quoted''; DROP TABLE x; --'. A separate sandbox executescript of the sqlite dialect stored the backslash-quote quote as one column value and did not add a row for SELECT 1. Pending and discarded markers were absent. BigQuery, Snowflake, and Postgres were not executed.",
+        "artifact": null
+      },
+      {
+        "agent_id": "v-sql",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "bin/research-desk",
+          "README.md",
+          "SECURITY.md"
+        ],
+        "invariant": "One quote-doubling encoder serves every named dialect, and only a local sqlite engine was available to execute it.",
+        "method": "local",
+        "result": "Independent sandbox replay kept the backslash-quote payload inside one sqlite column. BigQuery, Snowflake, and Postgres were not executed. Verdict remains needs_validation.",
+        "artifact": "agents/v-sql/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [
+      "store.sql_literal.quote-doubling-only"
+    ],
+    "unresolved": [],
+    "hunter_group": "h-inject",
+    "hardening_notes": [
+      "IDENT limits table names to a 63-character plain identifier, and finding writes use SQLite parameter binding. Those controls held on the export path that was reviewed.",
+      "A NUL inside sql_literal makes Python sqlite3 raise ValueError: embedded null character before any statement runs. The local driver did not turn that byte into a second statement. sql_literal still copies the NUL into the export file.",
+      "strip() on claim, quote, note, and goal title drops a leading tab, so a tab-prefixed formula is stored without the tab. Cells that already begin with =, +, -, or @ are the CSV case above."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23export::research_desk%2Fapi.py%23export::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "bin/research-desk#export",
+      "boundary": "research_desk/api.py#export",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "CLI export --out",
+    "boundary": "api.export writes the caller path",
+    "subsystem": "bin/research-desk",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "bin/research-desk",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Privileged helper as confused deputy",
+        "reason": "The CLI process is the invoking OS user, not a privileged helper."
+      },
+      {
+        "block": "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+        "reason": "CLI argv is the same OS user; MCP tool arguments are a separate surface."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [
+      {
+        "wave": 1,
+        "status": "covered",
+        "agent_id": "h-file",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py"
+        ],
+        "local_checks": [
+          {
+            "agent_id": "h-file",
+            "reviewed_paths": [
+              "bin/research-desk",
+              "research_desk/api.py"
+            ],
+            "invariant": "CLI export --out writes only a path the invoking OS user passed, and does not grant another local user a write they lack.",
+            "method": "source",
+            "result": "bin/research-desk export forwards --out to api.export. api.export expanduser's that string, mkdir's parents with the default mode, and Path.write_text's the approved-export body. There is no root, lexical '..' rejection, O_NOFOLLOW, or O_EXCL. The CLI process uid is the invoking user, not a helper. A same-user choice of --out, including a path outside the home, is the export feature. Another local user does not supply --out.",
+            "artifact": null
+          },
+          {
+            "agent_id": "h-file",
+            "reviewed_paths": [
+              "research_desk/api.py"
+            ],
+            "invariant": "Export creation mode and symlink following do not let another local user read or redirect the write unless that user can already write the parent directory the caller selected.",
+            "method": "source",
+            "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Sandbox api.export under umask 022. The created parent directory was 0755 and the new export file was 0644. Path.write_text followed a pre-created symlink and replaced the target body while leaving the symlink in place; the same happened for a symlink planted in a mode 01777 directory before the call. Those parents were writable by the caller in the test. A directory mode 0755 does not let other create that symlink. Effective other-read of a 0644 file still requires other-execute on every ancestor; /home/ubuntu is 0750, so an export written under the home is not readable by other. An export is readable by other only when the same OS user selects a parent that is already other-executable, such as /tmp or /workspace (both other-traversable from /).",
+            "artifact": null
+          }
+        ],
+        "result_fingerprints": [],
+        "unresolved": [],
+        "reassignment_reason": "Post-wave critic reassigned this covered export-path unit: Path.write_text symlink following and mode 0644 were left as hardening, and the sandbox observation was not a promoted artifact, so a lower-trust local user planting a symlink at a caller-chosen path in a sticky directory was not closed."
+      }
+    ],
+    "wave": 2,
+    "status": "covered",
+    "agent_id": "h-export2",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-export2",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A different local OS user cannot redirect the write api.export performs for CLI --out, and cannot read the export file or the sqlite file opened for that export, when those paths remain under the caller's home.",
+        "method": "source",
+        "result": "bin/research-desk line 39 passes --out to api.export. api.export lines 57-60 expanduser the caller path, mkdir the parent at the default mode, and write_text the approved export. Desk.__init__ lines 70-78 connect the sqlite path with sqlite3.connect. Neither call chmods. Same-user selection of an absolute path is the --out behavior. The repository has no second-user check on this sink.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-export2",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A different local OS user cannot redirect the write api.export performs for CLI --out, and cannot read the export file or the sqlite file opened for that export, when those paths remain under the caller's home.",
+        "method": "local",
+        "result": "Sandbox create_dummy.py (umask 022) wrote CLI exports at mode 0644 and sqlite desk.db at mode 0644, with api.export parent directories at mode 0755, all owned by uid 1000. expanduser of ~/cli-expanded/approved.sql stayed under HOME. Host user nobody (uid 65534, not in group 1000) received EACCES (errno 13) on read, O_WRONLY, and O_CREAT|O_EXCL for those paths. /home/ubuntu is mode 0750, which is the search denial. nobody could open mode 0644 /etc/passwd, so the credential can read other-readable files outside that home. A symlink at the named path was not created. Promotion of scratch/check-notes.txt is required.",
+        "artifact": "agents/h-export2/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-export2",
+    "hardening_notes": [
+      "api.export and Desk.__init__ leave the new inode mode to the process umask. Observed umask 022 created export and sqlite files at 0644 and parent directories at 0755; umask 077 created files at 0600 and the export directory at 0700. On this host /home/ubuntu mode 0750 and private group 1000 stop other users before that 0644 other-read bit matters. Creating the export file and desk.db at 0600, and directories this path creates at 0700, would keep those bytes unreadable to other local users when an ancestor directory is other-searchable."
+    ]
+  },
+  {
+    "coverage_id": "bin%2Fresearch-desk%23list::research_desk%2Fstore.py%23list_findings::bin%2Fresearch-desk::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "bin/research-desk#list",
+      "boundary": "research_desk/store.py#list_findings",
+      "subsystem": "bin/research-desk",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "CLI list and goals",
+    "boundary": "list_findings on the open database",
+    "subsystem": "bin/research-desk",
+    "attack_class": "Feature abuse and data leakage",
+    "starting_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Enumeration and aggregate oracles",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Universal moves",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Validation rules",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Union, enum, and default confusion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "The CLI runs as the invoking OS user; stdio identity is a different unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-gap",
+    "reviewed_paths": [
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-gap",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "CLI list and goals read only the open database, bind or allowlist every filter, and return that owner's goal rows or finding rows.",
+        "method": "source",
+        "result": "bin/research-desk list passes argparse --goal as int or None and --status default pending with choices pending, approved, discarded, and all into api.list_findings. goals calls api.list_goals with the same --db and no finding filter. store.list_findings selects from findings on the Desk connection, appends goal_id only after int(), and accepts a status predicate only for pending, approved, or discarded. status all and the CLI default are the documented same-file views. store.list_goals loads goal ids ordered by id and store.goal adds pending, approved, and discarded counts with bound goal_id and literal status strings. SELECT * FROM goals and the count queries do not join finding claim, quote, or note. There is no tenant column. The CLI principal is the OS user who opened the file.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-gap",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "research_desk/store.py"
+        ],
+        "invariant": "A list or goals command on one scratch database returns that file's rows only, and a status outside the four choices does not print findings.",
+        "method": "local",
+        "result": "Command: sandbox-run.sh h-gap python3 check_gap.py. Limits: env -i PATH=/usr/bin:/bin HOME=<scratch> TMPDIR=<scratch>/tmp LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=/workspace, prlimit --as=402653184 --cpu=20 --nproc=32 --fsize=2097152 --nofile=64, timeout 20s, no external network, read-only /workspace. Promotion of scratch/check-notes.txt is required. Database A held CLAIM_PENDING_A, CLAIM_APPROVED_A, and CLAIM_DISCARD_A; database B held CLAIM_ONLY_B. list default returned [CLAIM_PENDING_A]; approved, discarded, and all returned the matching A claims; --goal 1 --status all returned those three; B's claim was absent from A and A's claims were absent from B. goals A returned titles and counts 1/1/1 and 0/0/0 with keys id, title, created_at, pending, approved, discarded, and both claim tokens were absent. --goal 999 returned ok true and findings []. --status secret exited 2 and stdout did not contain CLAIM_PENDING_A. A claim containing quote characters round-tripped as one JSON string with ok true.",
+        "artifact": "agents/h-gap/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-gap",
+    "hardening_notes": [
+      "CLI list --goal for an id that goals does not return exits 0 with an empty findings array. The same command on a real id returns that goal's rows, and goals already lists the ids in the open file.",
+      "research_desk_status returns the absolute database path and aggregate counts to the spawning MCP client, which is the documented status payload. Finding claim and quote text stayed out of status and list_goals in the scratch run. A non-string start_goal title becomes JSON-RPC -32603 and does not insert a goal.",
+      "Export text returned with no out path still contains quote-doubled SQL and formula-leading CSV cells. Those bytes are the existing fingerprints store.sql_literal.quote-doubling-only and store.export.csv.formula-prefix. The JSON response round-trips that text and does not add a boundary of its own."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fapi.py%23demo::research_desk%2Fstore.py%23load_demo::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "research_desk/api.py#demo",
+      "boundary": "research_desk/store.py#load_demo",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "load_demo fixed JSON",
+    "boundary": "load_demo parses goal.json",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Feature abuse and data leakage",
+    "starting_paths": [
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "examples/harborline/goal.json"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Import and restore authority expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion",
+        "reason": "Demo load writes drafts; export scope is a separate unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-data",
+    "reviewed_paths": [
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "examples/harborline/goal.json",
+      "server/mcp_server.py",
+      "bin/research-desk"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-data",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "examples/harborline/goal.json",
+          "server/mcp_server.py",
+          "bin/research-desk"
+        ],
+        "invariant": "Demo import reads only the fixed examples/harborline/goal.json, inserts new pending drafts through add_finding, and cannot set status, choose a file, or write another database.",
+        "method": "source",
+        "result": "api.demo passes the constant DEMO path and no caller path. CLI demo and MCP load_demo take no path argument; MCP handle rejects unknown keys. load_demo uses json.loads on that path, start_goal inserts a new goal, and add_finding keeps the default pending status. The JSON status, id, and note fields are not read. The shipped findings are five http(s) .example URLs.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-data",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "A caller-supplied demo document cannot approve rows, open a file URL, or replace an existing goal.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: sandbox-run.sh h-data loaded the fixed goal.json into a scratch database: pending 5, approved 0, and a second load allocated a new goal id. api.demo with an extra path raised TypeError. MCP load_demo with a path argument returned unexpected ['path']. A scratch JSON whose first row claimed status approved and whose second row used file:///etc/passwd stored only the first row as pending and raised DeskError on the file URL. Approved list stayed empty.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-data",
+    "hardening_notes": [
+      "check_url accepts any http(s) netloc, including loopback, link-local, and userinfo, and it does not strip control characters after the netloc. Nothing on this path fetches or opens that string.",
+      "load_demo commits each finding before validating the next JSON row, so a later bad URL can leave earlier drafts pending. Entry points still pass only the fixed goal.json, and a status field in the JSON does not approve the row.",
+      "list_findings treats a falsy status as no status predicate, which matches status all for the same open database. Callers who can list can already request all, and a second database file stays unread."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23_decide::research_desk%2Fstore.py%23SCHEMA::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Business%20logic",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#_decide",
+      "boundary": "research_desk/store.py#SCHEMA",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Business logic"
+    },
+    "surface": "Finding state transitions",
+    "boundary": "status CHECK constraint",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Business logic",
+    "starting_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Business logic",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Soft-delete and tombstone bypass",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Restore reintroduces invalid state"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Retention and queued-work overrun",
+        "reason": "No background queue retains a copy after delete."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h-approve",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "server/mcp_server.py",
+      "tests/test_desk.py",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py",
+          "tests/test_desk.py"
+        ],
+        "invariant": "After a decide call commits, a later approve or discard of that finding fails and leaves the stored status unchanged.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: sandbox-run.sh h-approve (empty env, PYTHONPATH=/workspace, 20s timeout, prlimit as=402653184 cpu=20 nproc=32 fsize=2097152 nofile=64) called tools/call approve on a pending scratch row and then approve again and discard. Both follow-ups returned isError with 'finding 1 is already approved'. The row stayed approved. SCHEMA CHECK allows only pending, approved, and discarded; it does not encode legal edges. test_decisions_are_final covers this sequential path only.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py"
+        ],
+        "invariant": "A pending observation and the status write are one transition: a second decide that also observed pending must fail, and a committed discard must stay out of approved_rows.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: On one pending scratch finding, two sqlite connections both read status pending, which is the _decide guard. The first ran the _decide UPDATE (WHERE id = ? only) to discarded and committed. The second ran the same UPDATE shape to approved and committed. The row status was then approved. With a barrier after Desk.finding so both api.approve and api.discard passed the pending check, both calls returned success (discarded and approved) and the stored status was approved. approved_rows contained that id. One MCP stdin loop is serial; the overlap is two Desk connections.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A multi-id approve or discard that raises leaves every listed id in the status it had before the call.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: api.approve([10, 99999, 11]) on pending ids 10 and 11 raised DeskError 'no finding 99999' after _decide had committed id 10. Id 10 was approved and id 11 stayed pending. The same list retried raised 'finding 10 is already approved' and left 11 pending. A duplicate list [id, id] likewise committed the first decide and raised 'already approved' on the second. This is the caller's own prefix, so it is recorded as hardening rather than a second candidate.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "research_desk/store.py"
+        ],
+        "invariant": "Export, direct lookup, and reload honor a discarded or pending lifecycle and do not recreate an approved row from a snapshot.",
+        "method": "source",
+        "result": "approved_rows keeps WHERE f.status = 'approved'. finding() and list_findings can return a discarded row when that id or status is requested; that is the retained history the discard tool describes. No undo, undelete, backup, or restore function writes findings. load_demo only inserts new pending rows through add_finding. The race above changes the status the export predicate trusts; the predicate itself stays on approved.",
+        "artifact": null
+      },
+      {
+        "agent_id": "v-race",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py",
+          "skills/review-and-export/SKILL.md",
+          "tests/test_desk.py"
+        ],
+        "invariant": "A pending snapshot and an id-only UPDATE let a second connection replace a committed discard with approved.",
+        "method": "local",
+        "result": "Two scratch connections both read pending. Discard committed, then the approve UPDATE still changed the row to approved and approved_rows contained it. Sequential discard of an approved row raised DeskError.",
+        "artifact": "agents/v-race/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [
+      "research_desk/store.py:_decide:unconditional-status-update"
+    ],
+    "unresolved": [],
+    "hunter_group": "h-approve",
+    "hardening_notes": [
+      "Human approval is prompt text only: the approve and discard tool descriptions, initialize instructions, and skills/review-and-export/SKILL.md. The server stores no confirmation token, and handle() rejects an extra confirm key. destructiveHint is false for both tools and is not read by call(). That is the same OS user's intentional CLI and stdio tool, so it is not a cross-principal bypass. Set destructiveHint true so clients can treat the final status change as destructive.",
+      "api.approve and api.discard commit inside each _decide. On a scratch database, approve([10, 99999, 11]) raised 'no finding 99999' after id 10 was already approved, left 11 pending, and a retry of the same list raised 'already approved' without reaching 11. Wrap the id list in one transaction and roll it back when any id fails."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23approved_rows::research_desk%2Fstore.py%23approved_rows::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#approved_rows",
+      "boundary": "research_desk/store.py#approved_rows",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "Approved-row export selection",
+    "boundary": "status approved filter",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Feature abuse and data leakage",
+    "starting_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "server/mcp_server.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Soft-delete and tombstone bypass"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Enumeration and aggregate oracles",
+        "reason": "List and count oracles are the list_pending unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-inject",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "server/mcp_server.py",
+      "bin/research-desk"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "SQL and CSV export include only rows whose status is approved, and a discarded row cannot re-enter that set through _decide.",
+        "method": "source",
+        "result": "approved_rows selects findings with WHERE f.status = 'approved' and binds optional goal_id after int(). SCHEMA CHECK limits status to pending, approved, and discarded. export, api.export, the CLI export command, and MCP export_sql all call that query and take no status argument. _decide updates a row only when its current status is pending, so a discarded id is not approved again. list_findings can read discarded rows, and that path is not used by export.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "bin/research-desk",
+          "server/mcp_server.py"
+        ],
+        "invariant": "Pending and discarded marker text is absent from SQL and CSV exports, including goal-scoped export and MCP export_sql.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Same sandbox wrapper and limits. Desk.approved_rows returned ids 1, 4, and 5 while list_findings showed pending [2], approved [1, 4, 5], and discarded [3]. SQL and CSV text for all four dialects contained APPROVED_MARKER_7f3a and omitted PENDING_MARKER_7f3a, DISCARD_MARKER_7f3a, and discard-note-9c2e. goal_id scope returned [1, 4]. approved_rows('1 OR 1=1') raised ValueError. CLI export rows was 1 after approve of id 1 and discard of id 2, and both SQL and CSV omitted PENDING_MARKER_7f3a and DISCARD_MARKER_7f3a. MCP export_sql for bigquery and csv likewise reported rows 1 with both markers absent.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-inject",
+    "hardening_notes": [
+      "IDENT limits table names to a 63-character plain identifier, and finding writes use SQLite parameter binding. Those controls held on the export path that was reviewed.",
+      "A NUL inside sql_literal makes Python sqlite3 raise ValueError: embedded null character before any statement runs. The local driver did not turn that byte into a second statement. sql_literal still copies the NUL into the export file.",
+      "strip() on claim, quote, note, and goal title drops a leading tab, so a tab-prefixed formula is stored without the tab. Cells that already begin with =, +, -, or @ are the CSV case above."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23check_url::research_desk%2Fstore.py%23check_url::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#check_url",
+      "boundary": "research_desk/store.py#check_url",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "source_url check",
+    "boundary": "http(s) scheme and netloc",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "research_desk/store.py",
+      "server/mcp_server.py",
+      "bin/research-desk"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-argument injection into a downstream sink"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU",
+        "reason": "check_url does not open a file."
+      },
+      {
+        "block": "AI-AND-LLM.md#Unbounded delegated action loops",
+        "reason": "The desk does not fetch the URL or loop on it."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-data",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "server/mcp_server.py",
+      "bin/research-desk"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-data",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "server/mcp_server.py",
+          "bin/research-desk"
+        ],
+        "invariant": "source_url is stored only after urlparse requires an http or https scheme and a netloc, and this path neither fetches the URL nor opens it as a filesystem path.",
+        "method": "source",
+        "result": "check_url strips the string, rejects any other scheme or an empty netloc, and returns the stripped text. add_finding binds that text in the findings INSERT. No urlopen, socket, or path open consumes source_url. CLI and MCP add_finding both pass the field only into that function.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-data",
+        "reviewed_paths": [
+          "research_desk/store.py"
+        ],
+        "invariant": "Values that pass the scheme and netloc check remain local strings, including loopback, link-local, userinfo, and path segments that look like traversal.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: In the empty-network sandbox, check_url rejected file, javascript, ftp, data, bare paths, UNC paths, and http URLs with an empty netloc. It accepted http(s) loopback, link-local, userinfo, bracketed IPv6, and a path of /../../../../etc/passwd. add_finding stored those accepted strings as pending rows and returned without a network attempt. The stored path text was not opened.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-data",
+    "hardening_notes": [
+      "check_url accepts any http(s) netloc, including loopback, link-local, and userinfo, and it does not strip control characters after the netloc. Nothing on this path fetches or opens that string.",
+      "load_demo commits each finding before validating the next JSON row, so a later bad URL can leave earlier drafts pending. Entry points still pass only the fixed goal.json, and a status field in the JSON does not approve the row.",
+      "list_findings treats a falsy status as no status predicate, which matches status all for the same open database. Callers who can list can already request all, and a second database file stays unread."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23default_home::research_desk%2Fstore.py%23Desk.__init__::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#default_home",
+      "boundary": "research_desk/store.py#Desk.__init__",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "RESEARCH_DESK_HOME and XDG_DATA_HOME",
+    "boundary": "Desk creates and opens desk.db",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Credential-store and local-secret boundary mismatch"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Privileged helper as confused deputy",
+        "reason": "Database creation is in-process, not a setuid helper."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-file",
+    "reviewed_paths": [
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-file",
+        "reviewed_paths": [
+          "research_desk/store.py"
+        ],
+        "invariant": "The default desk.db and the directories Desk creates for it are not readable or symlink-replaceable by another local OS user beyond the protection of the user's home directory.",
+        "method": "source",
+        "result": "default_home uses RESEARCH_DESK_HOME, else XDG_DATA_HOME, else ~/.local/share, then joins research-desk. Those variables are the launching user's environment, not another account's input. Desk.__init__ mkdir(parents=True, exist_ok=True) with the default 0o777 mode (umask-masked) and sqlite3.connect(home/'desk.db') with no chmod. No O_NOFOLLOW. The credential-store question is whether a lower-trust local user can read the ledger. The code does not chmod 0700/0600.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-file",
+        "reviewed_paths": [
+          "research_desk/store.py"
+        ],
+        "invariant": "A fresh default directory chain is 0755 and desk.db is 0644, and another local user still cannot open that file through /home/ubuntu.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Sandbox Desk() with HOME set to a fresh mode 0750 directory and umask 022 created .local, .local/share, and research-desk at 0755 and desk.db at 0644. Walking the real default path under the sandbox HOME, other-execute is present on the created directories and other-read is present on desk.db, but /home/ubuntu is 0750 so other-read is not effective. getent group ubuntu has no other members, so the group class of mode 0750 does not admit a second account. A RESEARCH_DESK_HOME symlink to another directory was followed (mkdir exist_ok plus is_dir) and desk.db was created in the target at 0644; planting that symlink requires write access to its parent, which other does not have on the home or on the 0755 directories the app creates.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-file",
+    "hardening_notes": [
+      "Desk.__init__ creates a missing default directory chain with Path.mkdir's default mode. Under umask 022 that is 0755 for .local, .local/share, and research-desk, and sqlite3.connect creates desk.db as 0644. chmod 0700 on the directory and 0600 on desk.db after creation would keep the ledger private even if an ancestor were other-executable. On this host /home/ubuntu is 0750 and group ubuntu has no other members, so other cannot read the default file.",
+      "api.export uses Path.mkdir (0755 under umask 022) and Path.write_text, which follows symlinks and creates a 0644 file. Opening with O_NOFOLLOW and O_EXCL, and using mode 0600, would refuse a pre-created symlink in a sticky directory the caller chose and would not leave the export other-readable. The current follow behavior was observed: a symlink planted before export was overwritten with the export body.",
+      "sqlite3.connect follows a database-path symlink: an existing sqlite target receives new rows, and a dangling symlink creates a 0644 file at the target. A non-database target is left unchanged and raises DatabaseError. O_NOFOLLOW on the caller and default paths would close that follow. Another local user cannot plant the link on the default path because the created directories are not other-writable and /home/ubuntu is 0750."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23export::research_desk%2Fstore.py%23EXPORT_COLUMNS::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#export",
+      "boundary": "research_desk/store.py#EXPORT_COLUMNS",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "CSV export of approved rows",
+    "boundary": "csv.DictWriter of finding fields",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Injection",
+    "starting_paths": [
+      "research_desk/store.py",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Search, cache, and index ACL drift",
+        "reason": "No search index or cache copy exists."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h-inject",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "bin/research-desk",
+      "SECURITY.md",
+      "README.md",
+      "server/mcp_server.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "research_desk/store.py"
+        ],
+        "invariant": "csv.DictWriter of approved finding fields keeps commas, quotes, and newlines inside one cell and does not emit spreadsheet formula triggers as the first character of a cell.",
+        "method": "source",
+        "result": "store.export for fmt csv builds csv.DictWriter with fieldnames EXPORT_COLUMNS, default excel dialect, and QUOTE_MINIMAL, then writeheader and writerows of approved_rows. There is no prefix for cells whose text begins with =, +, -, or @. Claim, quote, note, and goal title are strip()ed and otherwise stored verbatim. source_url must be http(s) with a netloc, so it does not start with those characters. id, goal_id, and approved_at are an integer or a generated timestamp.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "bin/research-desk"
+        ],
+        "invariant": "A standards-compliant CSV parse round-trips formula-leading cells as text; a spreadsheet formula engine was not run.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Same sandbox wrapper and limits. CLI export --format csv bytes were: id,goal_id,goal,claim,source_url,quote,note,approved_at, then a newline, then 1,1,Goal,=1+1,https://a.example/p,\"x\\', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --\",+2+2,2026-10-19T17:42:02Z, then a newline. The claim field is the unquoted bytes =1+1 and the note field is the unquoted bytes +2+2. A second export of approved claims -2+2, @SUM(1+1), =1+1, a comma-and-quote claim, and a newline claim produced those leading bytes and csv.DictReader returned the original claim strings, including normal,quote\"here and the embedded newline. A quote value =HYPERLINK(\"http://example.invalid/x\",\"q\") was CSV-quoted and still began with = after DictReader. No spreadsheet process was executed.",
+        "artifact": null
+      },
+      {
+        "agent_id": "v-csv",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "SECURITY.md",
+          "README.md",
+          "server/mcp_server.py"
+        ],
+        "invariant": "CSV export copies approved field text. Formula-leading characters are not a defeated control.",
+        "method": "local",
+        "result": "Sandbox CSV retained leading =, +, -, and @ on approved fields and omitted pending and discarded markers. Verdict rejected: the stated export policy emits approved text for the same user to open.",
+        "artifact": "agents/v-csv/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [
+      "store.export.csv.formula-prefix"
+    ],
+    "unresolved": [],
+    "hunter_group": "h-inject",
+    "hardening_notes": [
+      "IDENT limits table names to a 63-character plain identifier, and finding writes use SQLite parameter binding. Those controls held on the export path that was reviewed.",
+      "A NUL inside sql_literal makes Python sqlite3 raise ValueError: embedded null character before any statement runs. The local driver did not turn that byte into a second statement. sql_literal still copies the NUL into the export file.",
+      "strip() on claim, quote, note, and goal title drops a leading tab, so a tab-prefixed formula is stored without the tab. Cells that already begin with =, +, -, or @ are the CSV case above."
+    ]
+  },
+  {
+    "coverage_id": "research_desk%2Fstore.py%23sqlite3.connect::research_desk%2Fstore.py%23SCHEMA::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Cryptography%20and%20secrets",
+    "canonical_refs": {
+      "surface": "research_desk/store.py#sqlite3.connect",
+      "boundary": "research_desk/store.py#SCHEMA",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets"
+    },
+    "surface": "SQLite connection",
+    "boundary": "No application cryptography",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Cryptography and secrets",
+    "starting_paths": [
+      "research_desk/store.py",
+      "SECURITY.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Cryptography and secrets",
+    "selected_companion_blocks": [
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Credential-store and local-secret boundary mismatch"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU",
+        "reason": "File creation mode is the default_home unit; this unit is secret and crypto use."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-meta",
+    "reviewed_paths": [
+      "research_desk/store.py",
+      "SECURITY.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "research_desk/store.py",
+          "SECURITY.md"
+        ],
+        "invariant": "The SQLite connection does not derive, compare, or fail open on a key, and the schema does not store a credential.",
+        "method": "source",
+        "result": "Desk.__init__ calls sqlite3.connect(self.path) with no key, no URI flag, and no PRAGMA. SCHEMA creates goals and findings columns for title, claim, source_url, quote, status, note, and timestamps, constrained to pending, approved, and discarded. now() formats a UTC timestamp. Row ids come from AUTOINCREMENT. No secrets, random, hashlib, or hmac import exists, and no comparison of a secret can take an error branch into a weaker mode. SECURITY.md describes one local SQLite file and no network calls. The rows are the launching user's research notes. File-creation mode is outside this unit.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-meta",
+    "hardening_notes": [
+      ".gitignore does not list the literal filename credentials.json or an extensionless private-key name; no such file is tracked, and the product never writes one.",
+      "bin/research-desk prints DeskError as JSON and leaves any other exception to the interpreter on the invoker's terminal; server/mcp_server.py returns exception text without a traceback. Both stay with the OS user who launched the process."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23add_finding::research_desk%2Fstore.py%23sql_literal::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#add_finding",
+      "boundary": "research_desk/store.py#sql_literal",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "MCP add_finding fields stored then exported",
+    "boundary": "sql_literal and to_sql",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Injection",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion",
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-argument injection into a downstream sink"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Import and restore authority expansion",
+        "reason": "Demo import is a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Missing tenant or owner enforcement",
+        "reason": "There is no tenant field; single-file scope is the export-scope unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Insecure output rendering",
+        "reason": "Export text is not rendered as HTML by this process."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h-inject",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py",
+      "skills/research-desk/SKILL.md",
+      "research_desk/api.py",
+      "bin/research-desk",
+      "README.md",
+      "SECURITY.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/store.py",
+          "skills/research-desk/SKILL.md"
+        ],
+        "invariant": "MCP add_finding claim, quote, and source_url are encoded for the export dialect before they appear in SQL text the user is told is escaped.",
+        "method": "source",
+        "result": "tools/call checks required and unknown keys only, then call passes add_finding goal_id, claim, source_url, and quote to api.add_finding. The tool schema types those fields as integer or string and does not constrain quotes or backslashes. check_url requires an http(s) scheme and a netloc. The initialize instructions and the research-desk skill say page content is untrusted and quotes should be copied verbatim. export_sql calls api.export with dialect default postgres. The SQL encoder is the same sql_literal used by the CLI: quote doubling for every dialect, type names only from DIALECTS. Skill text says to approve only on an explicit user decision; that gate does not rewrite the quote before export.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-inject",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A tools/call add_finding quote containing backslash-quote is stored and then exported with the same dialect-blind literal bytes.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Same sandbox wrapper and limits, scratch/check3.py driving server/mcp_server.py over stdio. add_finding stored claim =1+1, source_url https://a.example/a\\'b, and quote x\\', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; -- as pending. After approve of that id with note +2+2 and discard of a second finding, export_sql dialect bigquery and dialect postgres each returned rows 1 and the quote literal 'x\\'', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --' inside the INSERT. The bigquery document used INT64 and STRING; the INSERT VALUES text matched postgres. Pending and discard markers were absent. The URL literal in that export was 'https://a.example/a\\''b'. No BigQuery, Snowflake, or Postgres engine executed the text.",
+        "artifact": null
+      },
+      {
+        "agent_id": "v-sql",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "bin/research-desk",
+          "README.md",
+          "SECURITY.md"
+        ],
+        "invariant": "One quote-doubling encoder serves every named dialect, and only a local sqlite engine was available to execute it.",
+        "method": "local",
+        "result": "Independent sandbox replay kept the backslash-quote payload inside one sqlite column. BigQuery, Snowflake, and Postgres were not executed. Verdict remains needs_validation.",
+        "artifact": "agents/v-sql/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [
+      "store.sql_literal.quote-doubling-only"
+    ],
+    "unresolved": [],
+    "hunter_group": "h-inject",
+    "hardening_notes": [
+      "IDENT limits table names to a 63-character plain identifier, and finding writes use SQLite parameter binding. Those controls held on the export path that was reviewed.",
+      "A NUL inside sql_literal makes Python sqlite3 raise ValueError: embedded null character before any statement runs. The local driver did not turn that byte into a second statement. sql_literal still copies the NUL into the export file.",
+      "strip() on claim, quote, note, and goal title drops a leading tab, so a tab-prefixed formula is stored without the tab. Cells that already begin with =, +, -, or @ are the CSV case above."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23approve::research_desk%2Fstore.py%23_decide::server%2Fmcp_server.py::ATTACK-CLASSES.md%23Access%20control",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#approve",
+      "boundary": "research_desk/store.py#_decide",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "ATTACK-CLASSES.md#Access control"
+    },
+    "surface": "MCP approve",
+    "boundary": "pending-only _decide",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "Access control",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Action-confirmation and approval binding",
+      "AI-AND-LLM.md#Excessive agency and confused-deputy authority",
+      "AI-AND-LLM.md#MCP metadata and schema as policy"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+        "reason": "approve does not pass finding text into a shell or SQL sink."
+      },
+      {
+        "block": "AI-AND-LLM.md#Sub-agent and MCP trust inheritance",
+        "reason": "Stdio peer identity is the MCP main unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-approve",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "skills/review-and-export/SKILL.md",
+      "skills/research-desk/SKILL.md",
+      "bin/research-desk"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "skills/review-and-export/SKILL.md",
+          "skills/research-desk/SKILL.md",
+          "bin/research-desk"
+        ],
+        "invariant": "approve persists approved only when a deterministic control binds an explicit human decision to that finding id.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: The only code gate is _decide's pending check. tools/call approve with arguments {finding_ids:[1]} and no confirmation field returned ok and status approved. Adding confirm was rejected as unexpected ['confirm'] before call(). call() forwards finding_ids and note to api.approve, which updates exactly those ids. The human-decision rule is prompt text: approve's description, initialize instructions, and skills/review-and-export/SKILL.md. handle() does not read those strings. The stdio MCP client and the CLI are the same OS user the tool is for; bin/research-desk approve calls the same api.approve. An intentional call by that principal is the product path, so the missing token is hardening, not a second-principal bypass.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "server/mcp_server.py"
+        ],
+        "invariant": "destructiveHint is enforced by the server as an authorization gate on approve.",
+        "method": "source",
+        "result": "tool() defaults destructive to False and approve does not override it, so tools/list advertises destructiveHint false, readOnlyHint false, and openWorldHint false. handle() and call() never read annotations. The hint can guide a client and cannot grant or remove the server's ability to perform the update. The same transition remains available through the CLI, which has no annotation. Host UI policy for the hint is outside this process and is not required to settle the server gate.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-approve",
+    "hardening_notes": [
+      "Human approval is prompt text only: the approve and discard tool descriptions, initialize instructions, and skills/review-and-export/SKILL.md. The server stores no confirmation token, and handle() rejects an extra confirm key. destructiveHint is false for both tools and is not read by call(). That is the same OS user's intentional CLI and stdio tool, so it is not a cross-principal bypass. Set destructiveHint true so clients can treat the final status change as destructive.",
+      "api.approve and api.discard commit inside each _decide. On a scratch database, approve([10, 99999, 11]) raised 'no finding 99999' after id 10 was already approved, left 11 pending, and a retry of the same list raised 'already approved' without reaching 11. Wrap the id list in one transaction and roll it back when any id fails."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23discard::research_desk%2Fstore.py%23_decide::research_desk%2Fapi.py::ATTACK-CLASSES.md%23Access%20control",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#discard",
+      "boundary": "research_desk/store.py#_decide",
+      "subsystem": "research_desk/api.py",
+      "attack_class": "ATTACK-CLASSES.md#Access control"
+    },
+    "surface": "MCP discard",
+    "boundary": "pending-only _decide",
+    "subsystem": "research_desk/api.py",
+    "attack_class": "Access control",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Action-confirmation and approval binding"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Excessive agency and confused-deputy authority",
+        "reason": "Same state transition as approve; confused-deputy credential scope is the approve unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-approve",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py",
+      "skills/review-and-export/SKILL.md"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "skills/review-and-export/SKILL.md"
+        ],
+        "invariant": "discard persists discarded only when a deterministic control binds the user's decision to those finding ids.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: discard's description and the review skill say to call it only on the user's decision. call() passes finding_ids and note to api.discard with no confirmation argument, and _decide only checks pending. tools/list sets destructiveHint false for discard. A discard of an already approved id returned isError 'finding 1 is already approved'. api.discard on a still-pending id returned discarded. The caller is the same stdio or CLI principal who is allowed to discard; the prompt text is not treated as a missing cross-principal check.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-approve",
+        "reviewed_paths": [
+          "research_desk/api.py",
+          "research_desk/store.py",
+          "server/mcp_server.py"
+        ],
+        "invariant": "The discard handler decides the same ids the request names, and a sequential discard cannot approve a row or revive one.",
+        "method": "source",
+        "result": "api.discard maps the id list through _ids and _decide(finding_id, 'discarded', note). Status is the literal discarded. There is no branch that sets approved, clears decided_at, or reinserts a row. Export continues to require status approved. Replay and the concurrent overwrite of a discard are the state-machine unit.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-approve",
+    "hardening_notes": [
+      "Human approval is prompt text only: the approve and discard tool descriptions, initialize instructions, and skills/review-and-export/SKILL.md. The server stores no confirmation token, and handle() rejects an extra confirm key. destructiveHint is false for both tools and is not read by call(). That is the same OS user's intentional CLI and stdio tool, so it is not a cross-principal bypass. Set destructiveHint true so clients can treat the final status change as destructive.",
+      "api.approve and api.discard commit inside each _decide. On a scratch database, approve([10, 99999, 11]) raised 'no finding 99999' after id 10 was already approved, left 11 pending, and a retry of the same list raised 'already approved' without reaching 11. Wrap the id list in one transaction and roll it back when any id fails."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23export_sql::research_desk%2Fapi.py%23export::research_desk%2Fapi.py::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#export_sql",
+      "boundary": "research_desk/api.py#export",
+      "subsystem": "research_desk/api.py",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "MCP export_sql out_path",
+    "boundary": "api.export writes the caller path",
+    "subsystem": "research_desk/api.py",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Privileged helper as confused deputy"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Indirect injection through retrieved or ingested content",
+        "reason": "out_path is a tool argument, not a stored quote flowing into the path."
+      },
+      {
+        "block": "AI-AND-LLM.md#Action-confirmation and approval binding",
+        "reason": "Approval binding is the approve/discard unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Tool-schema and dispatcher disagreement",
+        "reason": "Schema disagreement is the tools/call unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#IPC peer-authentication gaps",
+        "reason": "Peer identity of stdio is the MCP main unit, not the write sink."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Custom-scheme and deep-link ambiguity",
+        "reason": "No URI scheme or deep link handler exists."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [
+      {
+        "wave": 1,
+        "status": "covered",
+        "agent_id": "h-file",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py"
+        ],
+        "local_checks": [
+          {
+            "agent_id": "h-file",
+            "reviewed_paths": [
+              "server/mcp_server.py",
+              "research_desk/api.py"
+            ],
+            "invariant": "MCP export_sql out_path reaches the same api.export file sink as the CLI, still running as the OS user who launched the server, without a path confinement check.",
+            "method": "source",
+            "result": "export_sql's schema types out_path as an unconstrained string. handle checks required and unknown keys only. call() passes a.get('out_path') to api.export as out, with no normalization beyond what api.export does. The server process is the OS user from mcp.json's stdio launch, not a setuid helper. The model can name any path that user can write; that is the same authority as CLI --out. Peer identity of stdio is a different unit. No lower-trust OS account is added by out_path. Arbitrary same-user file write is the documented export behavior, not a second principal's write.",
+            "artifact": null
+          },
+          {
+            "agent_id": "h-file",
+            "reviewed_paths": [
+              "research_desk/api.py"
+            ],
+            "invariant": "The shared export sink's symlink follow and 0644 creation do not by themselves disclose the file to another local user.",
+            "method": "source",
+            "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: The MCP handler calls api.export, which was executed in the sandbox. New export files were 0644, parent directories 0755, and an existing symlink at out_path was followed and overwritten. Other-read remains blocked when an ancestor lacks other-execute. On this host that ancestor is /home/ubuntu mode 0750. A model-chosen path in a world-traversable directory would be readable by other because of that directory plus mode 0644; choosing it uses the launching user's own write, which the tool is specified to perform.",
+            "artifact": null
+          }
+        ],
+        "result_fingerprints": [],
+        "unresolved": [],
+        "reassignment_reason": "Post-wave critic reassigned this covered export-path unit: Path.write_text symlink following and mode 0644 were left as hardening, and the sandbox observation was not a promoted artifact, so a lower-trust local user planting a symlink at a caller-chosen path in a sticky directory was not closed."
+      }
+    ],
+    "wave": 2,
+    "status": "covered",
+    "agent_id": "h-export2",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-export2",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A different local OS user cannot redirect the write api.export performs for MCP export_sql out_path, and cannot read the export file or the sqlite file opened for that export, when those paths remain under the caller's home.",
+        "method": "source",
+        "result": "server/mcp_server.py lines 47-48 pass export_sql out_path to api.export and do not pass a database path, so Desk uses default_home. The MCP process is the OS user who spawned it. out_path is expanded and written by the same api.export sink as the CLI, with no chmod and no check that the writer is a different principal. Same-user selection of an absolute out_path is the export feature.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-export2",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A different local OS user cannot redirect the write api.export performs for MCP export_sql out_path, and cannot read the export file or the sqlite file opened for that export, when those paths remain under the caller's home.",
+        "method": "local",
+        "result": "The same sandbox run called export_sql through mcp_server.handle. It created mcp-home/desk.db mode 0644 (Desk mkdir of the home directory mode 0755) and out/approved.csv mode 0644 (parent out/ mode 0755). nobody (uid 65534) received EACCES on read and write of both files and on O_CREAT|O_EXCL in out/. With umask 077 the same api.export and sqlite3.connect produced mode 0600 files and a mode 0700 directory, so the calls do not open the mode past umask. Promotion of scratch/check-notes.txt is required.",
+        "artifact": "agents/h-export2/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-export2",
+    "hardening_notes": [
+      "api.export and Desk.__init__ leave the new inode mode to the process umask. Observed umask 022 created export and sqlite files at 0644 and parent directories at 0755; umask 077 created files at 0600 and the export directory at 0700. On this host /home/ubuntu mode 0750 and private group 1000 stop other users before that 0644 other-read bit matters. Creating the export file and desk.db at 0600, and directories this path creates at 0700, would keep those bytes unreadable to other local users when an ancestor directory is other-searchable."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23list_pending::research_desk%2Fstore.py%23list_findings::research_desk%2Fstore.py::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#list_pending",
+      "boundary": "research_desk/store.py#list_findings",
+      "subsystem": "research_desk/store.py",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "MCP list_pending",
+    "boundary": "list_findings status filter",
+    "subsystem": "research_desk/store.py",
+    "attack_class": "Feature abuse and data leakage",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Enumeration and aggregate oracles",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Analytics, logs, traces, and diagnostics as alternate readers"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion",
+        "reason": "Export selection is the approved_rows unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-data",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/store.py",
+      "research_desk/api.py",
+      "bin/research-desk"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-data",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/store.py",
+          "research_desk/api.py",
+          "bin/research-desk"
+        ],
+        "invariant": "list_pending returns findings only from the already-open local database, with goal and status filters bound or allowlisted, and no second database or caller path.",
+        "method": "source",
+        "result": "MCP list_pending calls api.list_findings with optional goal_id and status defaulting to pending. list_findings selects from the Desk connection, binds goal_id after int(), and accepts only pending, approved, discarded, or all. There is no tenant column and no db-path argument on this tool. Status all is the documented same-database view, not another principal's store.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-data",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/store.py",
+          "research_desk/api.py"
+        ],
+        "invariant": "A list on one scratch database cannot observe rows stored in a second scratch database, and an unknown status does not widen the read.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Two Desk files were created in scratch. list_findings on the first file returned only that file's pending, approved, and discarded rows; status pending omitted the other statuses; goal filter limited rows to that goal; a missing goal id returned an empty list; status hidden raised DeskError. The second file's claim was absent from the first file. MCP list_pending against a fresh RESEARCH_DESK_HOME returned an empty findings array, then only the row added in that home.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-data",
+    "hardening_notes": [
+      "check_url accepts any http(s) netloc, including loopback, link-local, and userinfo, and it does not strip control characters after the netloc. Nothing on this path fetches or opens that string.",
+      "load_demo commits each finding before validating the next JSON row, so a later bad URL can leave earlier drafts pending. Entry points still pass only the fixed goal.json, and a status field in the JSON does not approve the row.",
+      "list_findings treats a falsy status as no status predicate, which matches status all for the same open database. Callers who can list can already request all, and a second database file stays unread."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23main::mcp.json%23mcpServers::server%2Fmcp_server.py::ATTACK-CLASSES.md%23Access%20control",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#main",
+      "boundary": "mcp.json#mcpServers",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "ATTACK-CLASSES.md#Access control"
+    },
+    "surface": "MCP stdio JSON-RPC",
+    "boundary": "No peer authentication on stdin",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "Access control",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "mcp.json"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Sub-agent and MCP trust inheritance",
+      "AI-AND-LLM.md#MCP server and tool identity confusion",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#IPC peer-authentication gaps",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Universal moves",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Validation rules",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Peer identity to application-principal confusion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Exported service, activity, receiver, or provider overreach",
+        "reason": "No mobile component or socket listener is registered."
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Topic, routing-key, and subscription scope gaps",
+        "reason": "No broker topic is constructed."
+      },
+      {
+        "block": "AI-AND-LLM.md#MCP metadata and schema as policy",
+        "reason": "Metadata-as-policy is reviewed on the approve unit where descriptions claim a user gate."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-proto",
+    "reviewed_paths": [
+      "mcp.json",
+      "server/mcp_server.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-proto",
+        "reviewed_paths": [
+          "mcp.json",
+          "server/mcp_server.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "The stdio server accepts tool calls only on the spawning host's pipe, and no JSON-RPC field selects another OS user or database.",
+        "method": "source",
+        "result": "mcp.json launches python3 on server/mcp_server.py with command, args, and cwd only. main() reads sys.stdin line by line and, for any object that contains id, calls handle() with no token, SO_PEERCRED, initialize gate, or jsonrpc version check. Desk path selection is default_home() from RESEARCH_DESK_HOME, XDG_DATA_HOME, or the process home, which the spawning host sets. tools/call reads params.name and params.arguments. The product principal for this entry is that same OS user. The missing in-process peer check is the stdio product boundary.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-proto",
+        "reviewed_paths": [
+          "server/mcp_server.py"
+        ],
+        "invariant": "A tools/call cannot redirect the database, and a notification without id does not run a tool.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Command: sandbox-run.sh h-proto python3 scratch/schema-check.py. Limits: env -i PATH HOME=scratch TMPDIR=scratch/tmp LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=/workspace, prlimit --as=402653184 --cpu=20 --nproc=32 --fsize=2097152 --nofile=64, timeout 20s, no external network, read-only /workspace. A notification start_goal created no row. arguments.db was rejected as unexpected. params.db was ignored: research_desk_status reported the scratch desk.db and the next start_goal wrote goal id 2 in that same file. tools/call ran with no prior initialize. Server exit code 0.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-proto",
+    "hardening_notes": [
+      "Cap each stdin line in server/mcp_server.py main() before json.loads, and catch RecursionError and MemoryError in that loop so one line cannot exit the caller's own MCP process.",
+      "Before call(), enforce the published inputSchema type, enum, items, and minItems. handle() currently accepts goal_id 1.9 and true as goal 1, finding_ids [1.9], true, and \"2\" as those integers, and status null, \"\", or [] as every status, which status \"all\" already allows. store.py still rejects unknown status, format, dialect, and table names."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23main::server%2Fmcp_server.py%23main::server%2Fmcp_server.py::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Unbounded%20buffering%20and%20cardinality",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#main",
+      "boundary": "server/mcp_server.py#main",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality"
+    },
+    "surface": "MCP stdin line",
+    "boundary": "json.loads of a full line",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "Unbounded buffering and cardinality",
+    "starting_paths": [
+      "server/mcp_server.py"
+    ],
+    "ordinary_attack_class_block": null,
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Reachable fatal error or deadlock"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "A large line is a resource question, not a sink-injection question."
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Superlinear parsing, matching, or evaluation",
+        "reason": "json.loads is linear in the line; no catastrophic regex is on this path."
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+        "reason": "There is no authentication step that this work precedes."
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Quota-accounting scope and reset gaps",
+        "reason": "No quota counter exists."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-proto",
+    "reviewed_paths": [
+      "server/mcp_server.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-proto",
+        "reviewed_paths": [
+          "server/mcp_server.py"
+        ],
+        "invariant": "An unbounded stdin line or a fatal parse error must affect a principal other than the host that writes this process's stdin before it is a shared-service failure.",
+        "method": "source",
+        "result": "main() does `for line in sys.stdin` and json.loads the stripped line with no length, depth, or cardinality cap. JSONDecodeError is turned into JSON-RPC -32700 and the loop continues. RecursionError and MemoryError from json.loads are not caught there, so they end this process. Each request is handled and dropped; there is no session table, subscription set, or cross-user queue. The writer of stdin is the host that spawned this child. No second principal shares the process. A large-line execution was not run. Self-impact on this process is local robustness.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-proto",
+    "hardening_notes": [
+      "Cap each stdin line in server/mcp_server.py main() before json.loads, and catch RecursionError and MemoryError in that loop so one line cannot exit the caller's own MCP process.",
+      "Before call(), enforce the published inputSchema type, enum, items, and minItems. handle() currently accepts goal_id 1.9 and true as goal 1, finding_ids [1.9], true, and \"2\" as those integers, and status null, \"\", or [] as every status, which status \"all\" already allows. store.py still rejects unknown status, format, dialect, and table names."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23research_desk_status::research_desk%2Fapi.py%23status::server%2Fmcp_server.py::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#research_desk_status",
+      "boundary": "research_desk/api.py#status",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "MCP status, start_goal, and list_goals",
+    "boundary": "api.status returns the database path",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "Feature abuse and data leakage",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Enumeration and aggregate oracles",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Analytics, logs, traces, and diagnostics as alternate readers",
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Sensitive context extraction"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "These tools do not take a caller filesystem path."
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion",
+        "reason": "They do not call export."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-gap",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-gap",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "MCP status, start_goal, and list_goals use the process database only, and status returns that path plus counts and relative skill paths rather than finding bodies.",
+        "method": "source",
+        "result": "call() maps research_desk_status to api.status() with no arguments, start_goal to api.start_goal(title), and list_goals to api.list_goals(). None of the three schemas accepts a database path. handle() rejects unknown keys before call(). api.status builds one Desk, returns d.path from that object, counts goals with len(list_goals()), and counts findings with list_findings for the three literal statuses. Skill paths are relative paths under ROOT / skills matching */SKILL.md. start_goal strips the title, rejects an empty title, and inserts with a bound parameter. list_goals returns goal rows plus counts. The tool description and README state that status returns the database path. The reader is the MCP client of the OS user who spawned the server.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-gap",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py"
+        ],
+        "invariant": "Status reports the scratch database it writes, list_goals omits finding text, and a caller-supplied db argument is rejected.",
+        "method": "local",
+        "result": "Same sandbox command, limits, and promotion requirement. RESEARCH_DESK_HOME was scratch mcp-home. The first status returned goals/pending/approved/discarded 0, skills skills/research-desk/SKILL.md and skills/review-and-export/SKILL.md, and a db value ending in mcp-home/desk.db. arguments.db returned unexpected ['db']. start_goal stored the stripped title MCP goal token-mcp; a whitespace title returned goal title is required; title 123 returned JSON-RPC -32603 with message 'int' object has no attribute 'strip'. After add_finding of MCP_SECRET_CLAIM and MCP_SECRET_QUOTE, list_goals returned the title only and both secret tokens were absent from list_goals and from the next status. That status reported goals 1, pending 1, approved 0, discarded 0, and content text parsed equal to structuredContent. list_goals with status was rejected as unexpected. A second scratch database's claim list stayed unchanged. Each response was one JSON line and contained no ESC byte.",
+        "artifact": "agents/h-gap/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-gap",
+    "hardening_notes": [
+      "CLI list --goal for an id that goals does not return exits 0 with an empty findings array. The same command on a real id returns that goal's rows, and goals already lists the ids in the open file.",
+      "research_desk_status returns the absolute database path and aggregate counts to the spawning MCP client, which is the documented status payload. Finding claim and quote text stayed out of status and list_goals in the scratch run. A non-string start_goal title becomes JSON-RPC -32603 and does not insert a goal.",
+      "Export text returned with no out path still contains quote-doubled SQL and formula-leading CSV cells. Those bytes are the existing fingerprints store.sql_literal.quote-doubling-only and store.export.csv.formula-prefix. The JSON response round-trips that text and does not add a boundary of its own."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23tools%2Fcall::research_desk%2Fapi.py%23export::research_desk%2Fapi.py::ATTACK-CLASSES.md%23Chained%20vulnerabilities%20and%20trust%20boundaries",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#tools/call",
+      "boundary": "research_desk/api.py#export",
+      "subsystem": "research_desk/api.py",
+      "attack_class": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries"
+    },
+    "surface": "Export text returned on stdout",
+    "boundary": "export text in the JSON response",
+    "subsystem": "research_desk/api.py",
+    "attack_class": "Chained vulnerabilities and trust boundaries",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-argument injection into a downstream sink",
+      "AI-AND-LLM.md#Insecure output rendering",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Universal moves",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Validation rules",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Message boundary and canonicalization disagreement",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Export and backup scope expansion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU",
+        "reason": "This unit is the response body when out is omitted, not the file write."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "No caller path is opened when out is omitted."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-gap",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "bin/research-desk",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-gap",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "bin/research-desk",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "When out or out_path is omitted, the JSON response carries the store.export text for approved rows, and JSON encoding round-trips that text without a second sink.",
+        "method": "source",
+        "result": "api.export calls Desk.export and, when out is falsy, returns that dict with no path key and no write. Desk.export reads approved_rows only. CLI export and MCP export_sql both pass a missing path through as None, and an empty out_path is also falsy. CLI prints json.dumps of the result. MCP handle puts the same object in structuredContent and json.dumps of it in content[0].text, then main prints one json.dumps line. json.dumps escapes quotes, backslashes, newlines, ESC, and non-ASCII before they reach stdout. A consumer that parses JSON receives the store text. The raw stdout document begins with a JSON object. Quote doubling and CSV formula-leading cells are produced inside store.export before this channel choice; those root causes are store.sql_literal.quote-doubling-only and store.export.csv.formula-prefix. This channel does not add an encoder, a row set, or a file sink.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-gap",
+        "reviewed_paths": [
+          "bin/research-desk",
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "Stdout export text matches api.export, omits pending and discarded markers, scopes goal_id, and keeps control characters inside the JSON string.",
+        "method": "local",
+        "result": "Same sandbox command, limits, and promotion requirement. Scratch rows: pending PENDING_MARKER, approved claim =1+1 with quote it's a quote plus newline, U+2028, and ESC, note +2+2, discarded DISCARD_MARKER, and a second goal OTHER_APPROVED. CLI export with no --out had rows 2, no path key, stdout first byte '{', and json.loads restored the text. Raw stdout contained neither ESC nor U+2028. Parsed SQL contained OTHER_APPROVED and it''s, and omitted both markers. CSV text contained ,=1+1, and ,+2+2, and omitted both markers. --goal 1 CSV contained =1+1 and omitted OTHER_APPROVED. --table bad-name returned the identifier error and no text. No sql or csv file was created. api.export text matched the CLI text. MCP export_sql with an empty argument object, and with out_path \"\", returned that same SQL, no path, and content text equal to structuredContent. MCP csv with goal_id 1 returned rows 1, omitted OTHER_APPROVED, and still contained ,=1+1,. Those bytes are the two existing fingerprints. The JSON channel added no row and no second encoding.",
+        "artifact": "agents/h-gap/artifacts/check-notes.txt"
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-gap",
+    "hardening_notes": [
+      "CLI list --goal for an id that goals does not return exits 0 with an empty findings array. The same command on a real id returns that goal's rows, and goals already lists the ids in the open file.",
+      "research_desk_status returns the absolute database path and aggregate counts to the spawning MCP client, which is the documented status payload. Finding claim and quote text stayed out of status and list_goals in the scratch run. A non-string start_goal title becomes JSON-RPC -32603 and does not insert a goal.",
+      "Export text returned with no out path still contains quote-doubled SQL and formula-leading CSV cells. Those bytes are the existing fingerprints store.sql_literal.quote-doubling-only and store.export.csv.formula-prefix. The JSON response round-trips that text and does not add a boundary of its own."
+    ]
+  },
+  {
+    "coverage_id": "server%2Fmcp_server.py%23tools%2Fcall::server%2Fmcp_server.py%23call::server%2Fmcp_server.py::ATTACK-CLASSES.md%23Chained%20vulnerabilities%20and%20trust%20boundaries",
+    "canonical_refs": {
+      "surface": "server/mcp_server.py#tools/call",
+      "boundary": "server/mcp_server.py#call",
+      "subsystem": "server/mcp_server.py",
+      "attack_class": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries"
+    },
+    "surface": "MCP tools/call argument decode",
+    "boundary": "call() uses arguments after key checks",
+    "subsystem": "server/mcp_server.py",
+    "attack_class": "Chained vulnerabilities and trust boundaries",
+    "starting_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Tool-schema and dispatcher disagreement",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Universal moves",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Validation rules",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Message boundary and canonicalization disagreement",
+      "PROTOCOLS-RPC-AND-MESSAGING.md#Union, enum, and default confusion"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Wildcard",
+        "reason": "Assigned class is specific; residual code is the wildcard unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Duplicate delivery and idempotency gaps",
+        "reason": "No broker redelivery; state replay is the business-logic unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Action-confirmation and approval binding",
+        "reason": "Confirmation binding is the approve unit."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-proto",
+    "reviewed_paths": [
+      "server/mcp_server.py",
+      "research_desk/api.py",
+      "research_desk/store.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-proto",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "The tools/call key check is the only executable consumer of inputSchema; type, enum, items, and minItems reach call() only if a later function rejects or preserves them.",
+        "method": "source",
+        "result": "tool() publishes inputSchema type, enum, items, minItems, and additionalProperties. handle() for tools/call uses spec['required'] and spec['properties'] only, then call() forwards the same dict. api._ids coerces a bare int or str and then int() of each element. store.list_findings treats a falsy status as every row and rejects any other status outside pending, approved, discarded, and all. Desk.export and to_sql reject format other than sql or csv, unknown dialects, and non-IDENT table names. The CLI sibling uses argparse type=int and choices for the same fields, as the same OS user.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-proto",
+        "reviewed_paths": [
+          "server/mcp_server.py",
+          "research_desk/api.py",
+          "research_desk/store.py"
+        ],
+        "invariant": "A tools/call value outside the published schema is rejected, or it selects a goal, finding, or status set the same caller can already name with a schema-valid value.",
+        "method": "source",
+        "result": "Source review of this invariant. A sandbox observation was reported by the hunter but was not an allowlisted promoted artifact, so it is not ledger evidence. Source result: Same sandbox command and limits as the access-control run, dummy https://a.example rows, fresh scratch desk.db. tools/list returned integer goal_id, finding_ids array of integer minItems 1, and the status, format, and dialect enums. Observed accepts: goal_id 1.9 stored finding 3 on goal 1; approve [1.9] set finding 1 to approved; approve true then targeted finding 1; goal_id true stored finding 4 on goal 1; finding_ids \"2\" approved finding 2; approve [2.2] targeted finding 2; status null, \"\", and [] each returned findings 1, 2, and 3, the same id set as status \"all\"; export_sql with arguments [] returned format sql and rows 2, matching an empty object on a tool whose required list is empty. Observed rejects: status \"nope\", format \"xml\", dialect \"oracle\", table \"bad-name\", finding_ids [], extra argument keys, arguments 1 (JSON-RPC -32603), title 123 (JSON-RPC -32603), goal_id 10**20 (JSON-RPC -32603, SQLite integer overflow). Later calls still succeeded and the process exited 0. The coerced integers and the full status set are values this caller can submit directly as integers or status \"all\".",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-proto",
+    "hardening_notes": [
+      "Cap each stdin line in server/mcp_server.py main() before json.loads, and catch RecursionError and MemoryError in that loop so one line cannot exit the caller's own MCP process.",
+      "Before call(), enforce the published inputSchema type, enum, items, and minItems. handle() currently accepts goal_id 1.9 and true as goal 1, finding_ids [1.9], true, and \"2\" as those integers, and status null, \"\", or [] as every status, which status \"all\" already allows. store.py still rejects unknown status, format, dialect, and table names."
+    ]
+  },
+  {
+    "coverage_id": "skills%2Fresearch-desk%2FSKILL.md%23workflow::skills%2Freview-and-export%2FSKILL.md%23Review::skills%2Fresearch-desk%2FSKILL.md::ATTACK-CLASSES.md%23Wildcard",
+    "canonical_refs": {
+      "surface": "skills/research-desk/SKILL.md#workflow",
+      "boundary": "skills/review-and-export/SKILL.md#Review",
+      "subsystem": "skills/research-desk/SKILL.md",
+      "attack_class": "ATTACK-CLASSES.md#Wildcard"
+    },
+    "surface": "Agent skills returned as tool context",
+    "boundary": "review-and-export approval prose",
+    "subsystem": "skills/research-desk/SKILL.md",
+    "attack_class": "Wildcard",
+    "starting_paths": [
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md",
+      "server/mcp_server.py"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Wildcard",
+    "selected_companion_blocks": [
+      "AI-AND-LLM.md#Core discipline",
+      "AI-AND-LLM.md#Universal moves",
+      "AI-AND-LLM.md#Validation rules",
+      "AI-AND-LLM.md#Indirect injection through retrieved or ingested content",
+      "AI-AND-LLM.md#Prompt role and provenance confusion",
+      "AI-AND-LLM.md#Sensitive context extraction"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "ATTACK-CLASSES.md#Injection",
+        "reason": "No attacker-controlled string is interpolated into a command, query, or markup sink on this path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Access control",
+        "reason": "This path does not decide who may perform an action; identity is absent by product design and is covered on the MCP/CLI authority units."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Resource and file handling",
+        "reason": "This path does not open, create, or traverse a caller-chosen filesystem path."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Cryptography and secrets",
+        "reason": "This path does not generate or compare a secret."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Business logic",
+        "reason": "This path does not advance the pending/approved/discarded state machine."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "This path does not widen an export, list, or import beyond the caller's own database."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+        "reason": "This path is a single sink; cross-component handoff is a separate unit."
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Obvious things",
+        "reason": "Repo-wide secret and debug checks are a separate unit."
+      },
+      {
+        "block": "AI-AND-LLM.md#Persistent memory poisoning",
+        "reason": "The desk has no cross-session memory store beyond the single SQLite file the same user owns."
+      },
+      {
+        "block": "AI-AND-LLM.md#Cross-session or cross-tenant context bleed",
+        "reason": "No retrieval index or second tenant exists."
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h-meta",
+    "reviewed_paths": [
+      "skills/research-desk/SKILL.md",
+      "skills/review-and-export/SKILL.md",
+      "server/mcp_server.py",
+      "research_desk/api.py"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "skills/research-desk/SKILL.md",
+          "skills/review-and-export/SKILL.md",
+          "server/mcp_server.py",
+          "research_desk/api.py"
+        ],
+        "invariant": "Skill markdown and stored finding text do not enter the MCP instruction string, forge a tool role, or change the server's approve, discard, or export decision.",
+        "method": "source",
+        "result": "Both SKILL.md files are static instructions with name and description frontmatter and no scripts or hooks. api.status returns relative skill paths, not file bodies. handle initialize returns a fixed instructions string and does not read params into that string. tools/call results are one json.dumps object, so a quote cannot add a JSON-RPC message or a role field. call() dispatches approve, discard, and export from tool name and arguments only. Page text is not fetched by this process. The review skill's sentence that approval must be an explicit user decision is instruction text; the server never reads it.",
+        "artifact": null
+      },
+      {
+        "agent_id": "h-meta",
+        "reviewed_paths": [
+          "skills/research-desk/SKILL.md",
+          "skills/review-and-export/SKILL.md",
+          "server/mcp_server.py"
+        ],
+        "invariant": "Shipped skill text and initialize instructions contain no credential or policy secret that a tool response would disclose to another principal.",
+        "method": "source",
+        "result": "The two skills describe the local workflow, fictional Harborline demo, and export columns. They contain no key, token, or private path. initialize instructions and tool descriptions are constants in server/mcp_server.py. research_desk_status returns the caller's own database path, version, and counts. Git history for the skill files is the single initial commit, with no removed control or secret.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "hunter_group": "h-meta",
+    "hardening_notes": [
+      ".gitignore does not list the literal filename credentials.json or an extensionless private-key name; no such file is tracked, and the product never writes one.",
+      "bin/research-desk prints DeskError as JSON and leaves any other exception to the interpreter on the invoker's terminal; server/mcp_server.py returns exception text without a traceback. Both stay with the OS user who launched the process."
+    ]
+  }
+]

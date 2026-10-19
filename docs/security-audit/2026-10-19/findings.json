@@ -1,0 +1,347 @@
+[
+  {
+    "verdict": "confirmed",
+    "fingerprint": "research_desk/store.py:_decide:unconditional-status-update",
+    "title": "Overlapping approve and discard both commit because the pending check is outside the write",
+    "description": "Desk._decide loads a finding and raises when that snapshot is already decided, then updates the row by id and commits. That snapshot comparison is the strongest control on the path, and a later call on one connection rejects a decided row. The comparison and the UPDATE are separate statements, so two connections can both pass the read. The later update replaces the earlier decision. A discard that already returned success can leave the row approved, and a following approved_rows read includes it in the SQL or CSV export. The database belongs to the OS user who runs the CLI or the MCP server.",
+    "root_cause": "The finality check is the SELECT inside finding() and the Python comparison of that snapshot. The UPDATE predicate is the finding id. Desk leaves isolation_level at the interpreter default, which on this runtime is the empty string, so the deferred transaction begins on the UPDATE and a stale pending read still commits.",
+    "intended_behavior": "A decision is final for that finding. _decide may change a row only while its stored status is still pending, and a second approve or discard must fail without writing. A finding whose discard committed stays out of the approved export.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 45,
+        "scope": "call",
+        "description": "tools/call approve passes the model-supplied finding_ids to api.approve. main() reads stdin one JSON-RPC request at a time, so the overlapping decide is a second Desk connection on the same database, such as the CLI."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/api.py",
+        "line": 48,
+        "scope": "approve",
+        "description": "approve opens one Desk connection and calls Desk.approve for each id, which enters _decide and commits inside that call."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 137,
+        "scope": "Desk._decide",
+        "description": "finding() on line 136 has loaded the row. Line 137 compares that snapshot with pending, and line 138 raises DeskError when the snapshot is already decided."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 139,
+        "scope": "Desk._decide",
+        "description": "The UPDATE writes status, note, and decided_at for that id, and commit() on line 141 stores it. A following approved_rows read on line 153 returns the row when the stored status is approved."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "research_desk/store.py",
+        "line": 118,
+        "description": "finding() selects the row by id. _decide uses that snapshot for the pending test."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 137,
+        "description": "The pending test compares the earlier SELECT result and raises DeskError only for that snapshot."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 139,
+        "description": "The UPDATE is parameterized by the new status and the id. After a discard commit it still matched the row, with rowcount 1."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 141,
+        "description": "commit() makes that id-keyed write durable before _decide returns the row."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 29,
+        "description": "The CHECK constraint allows pending, approved, and discarded. It accepts every edge among those three values."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 153,
+        "description": "approved_rows keeps rows whose current status is approved, so the winning write is the export set."
+      },
+      {
+        "file": "skills/review-and-export/SKILL.md",
+        "line": 12,
+        "description": "The review skill states that a decision is final for that finding and tells the user to add a new finding to change it."
+      },
+      {
+        "file": "tests/test_desk.py",
+        "line": 53,
+        "description": "test_decisions_are_final expects DeskError when discard follows approve on the same connection. That sequential order holds."
+      }
+    ],
+    "conditions": [
+      {
+        "kind": "timing_dependency",
+        "description": "Two Desk connections both observe pending, and each reaches its UPDATE. In the scratch run the discard UPDATE committed first and the approve UPDATE still changed the row. One MCP stdin loop handles one tools/call at a time; the overlap is a second connection, such as the CLI beside the MCP server."
+      },
+      {
+        "kind": "data_state",
+        "description": "The finding is pending when both reads run. After the first commit it is decided, and the second UPDATE still matches it by id."
+      }
+    ],
+    "execution": {
+      "attacker_perspective": "A second local connection calls approve on a finding id while another call discards that same id, and both reads happen while the row is still pending. The model-supplied tools/call approve is the lower-trust caller. On one connection, a discard after a committed approve fails.",
+      "payloads": [
+        "UPDATE findings SET status = 'discarded', note = '', decided_at = '2020-01-01T00:00:00Z' WHERE id = 1",
+        "UPDATE findings SET status = 'approved', note = '', decided_at = '2020-01-01T00:00:00Z' WHERE id = 1"
+      ],
+      "instructions": [
+        "In a scratch database, create one goal and one pending finding through Desk.",
+        "On two connections, SELECT status for that id and record that both results are pending.",
+        "On the first connection, run the discard UPDATE shown above and commit.",
+        "On the second connection, run the approve UPDATE shown above and commit.",
+        "SELECT status and read approved_rows and the SQL export.",
+        "Reset the row to pending. Barrier api.discard and api.approve after the pending snapshot and before the UPDATE, and let the discard commit first."
+      ],
+      "observed_result": "Both reads were pending. The discard UPDATE committed with rowcount 1 and status discarded. The approve UPDATE then committed with rowcount 1. Final status was approved, approved_rows was [1], and the SQL export contained the dummy claim. With the barrier, api.discard returned status discarded and api.approve returned status approved. The stored status was approved and approved_rows contained that id. A sequential api.discard of an approved row raised DeskError 'finding 1 is already approved' and left the row approved. Runtime was Python 3.12.3 and SQLite 3.45.1, and Desk().db.isolation_level was the empty string."
+    },
+    "remediation": {
+      "strategy": "Make the transition a single UPDATE whose predicate includes status = 'pending', and treat rowcount 0 as a missing row or an already decided row. SQLite serializes writers, so the second decide matches zero rows. Scratch check of that predicate: both reads were pending, the discard form committed, and the approve form reported rowcount 0 and left status discarded.",
+      "code_changes": [
+        {
+          "file_name": "research_desk/store.py",
+          "fixed_code": "def _decide(self, finding_id, status, note=\"\"):\n    finding_id = int(finding_id)\n    cur = self.db.execute(\n        \"UPDATE findings SET status = ?, note = ?, decided_at = ? \"\n        \"WHERE id = ? AND status = 'pending'\",\n        (status, (note or \"\").strip(), now(), finding_id))\n    if cur.rowcount != 1:\n        self.db.rollback()\n        row = self.db.execute(\n            \"SELECT status FROM findings WHERE id = ?\", (finding_id,)).fetchone()\n        if row is None:\n            raise DeskError(f\"no finding {finding_id}\")\n        raise DeskError(f\"finding {finding_id} is already {row['status']}\")\n    self.db.commit()\n    return self.finding(finding_id)\n"
+        }
+      ]
+    },
+    "severity": {
+      "likelihood": {
+        "score": "low",
+        "reason": "The caller must overlap two decide operations on the same pending id in the gap between the SELECT and the UPDATE. One MCP server processes tools/call serially, so this needs a second connection, such as the CLI beside the MCP server."
+      },
+      "impact": {
+        "score": "low",
+        "reason": "The database belongs to that OS user. The lost update can place a finding whose discard already committed into that user's approved SQL or CSV export, and the same window can replace an approval with a discard."
+      },
+      "overall_severity": "low"
+    },
+    "confidence": {
+      "score": "high",
+      "reason": "The UPDATE matches on id. A two-connection scratch run recorded both reads as pending, a committed discard, then an approve UPDATE with rowcount 1, final status approved, and that id in approved_rows. api.discard and api.approve both returned success when a barrier held the gap between the check and the write."
+    }
+  },
+  {
+    "verdict": "rejected",
+    "fingerprint": "store.export.csv.formula-prefix",
+    "title": "Formula-leading CSV cells are the approved export text",
+    "description": "Desk.export renders approved rows with csv.DictWriter and the default QUOTE_MINIMAL dialect. A sandbox run stored a goal =Goal, a claim =1+1, a note +2+2, claims -2+2 and @SUM(1+1), and a quote beginning with =HYPERLINK(\"http://example.invalid/x\",\"q\"). The CSV text kept those leading characters, and csv.DictReader returned the same stored strings. A claim submitted as a leading tab plus =TAB was stored and exported as =TAB. Pending text =PENDING and discarded text -DISCARD were absent. check_url rejected a source_url of =https://a.example. A claim containing a comma and an embedded quote, and a quote containing a newline, each remained one cell. No spreadsheet process ran. That output is the export contract in source: a finding stays pending until approve, and the writer then emits the stored goal, claim, quote, and note. SECURITY.md calls the export text the user chooses to run elsewhere and limits the escaping promise to plain table identifiers and SQL string literals. README.md lists a spreadsheet with Postgres, SQLite, Snowflake, and BigQuery as a destination for that approved file.",
+    "claimed_root_cause": "Desk.export writes approved rows with csv.DictWriter defaults. QUOTE_MINIMAL quotes commas, quotes, and newlines, and it leaves a cell whose first character is =, +, -, or @ unchanged.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 43,
+        "scope": "call",
+        "description": "tools/call add_finding forwards the model-supplied claim and quote into api.add_finding. This handler does not rewrite a leading =, +, -, or @."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 113,
+        "scope": "Desk.add_finding",
+        "description": "The bound INSERT stores the stripped claim and quote on a pending row. check_url requires an http(s) scheme and a netloc, so source_url does not begin with a formula character."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 137,
+        "scope": "Desk._decide",
+        "description": "approve reaches this pending check. The following UPDATE stores the stripped note and sets status to approved. The row is excluded from export until that decision."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 153,
+        "scope": "Desk.approved_rows",
+        "description": "The SELECT returns goal title, claim, quote, and note only for rows whose status is approved."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 167,
+        "scope": "Desk.export",
+        "description": "writerows emits those strings through the DictWriter created at line 165 with EXPORT_COLUMNS, a newline lineterminator, and default QUOTE_MINIMAL. A cell whose first character is =, +, -, or @ is written with that first character."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "research_desk/store.py",
+        "line": 165,
+        "description": "csv.DictWriter is constructed with fieldnames EXPORT_COLUMNS and lineterminator newline, with no quoting override and no formula prefix."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 153,
+        "description": "approved_rows keeps rows with status approved and selects the stored goal title, claim, source_url, quote, and note."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 64,
+        "description": "check_url rejects a URL whose scheme is not http or https or whose netloc is empty."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 108,
+        "description": "add_finding strip()s the claim before insert, which removes a leading tab and leaves a leading =, +, -, or @ in place."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 140,
+        "description": "The decision UPDATE strip()s the note and stores it with the new status."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 85,
+        "description": "start_goal strip()s the goal title and stores that title, which approved_rows later exports as the goal column."
+      },
+      {
+        "file": "SECURITY.md",
+        "line": 3,
+        "description": "Exports are text the user chooses to run elsewhere. The stated escaping promise is a plain table identifier and SQL string literals."
+      },
+      {
+        "file": "README.md",
+        "line": 7,
+        "description": "The user approves or discards every finding. Approved findings export as SQL or CSV, ready for Postgres, SQLite, Snowflake, BigQuery, or a spreadsheet."
+      },
+      {
+        "file": "README.md",
+        "line": 18,
+        "description": "Only approved findings go into the export. Pending and discarded drafts never do."
+      }
+    ],
+    "reason": "The writer and the stated export policy agree: after an explicit approve, the desk emits the stored field text as a file the same OS user runs elsewhere. QUOTE_MINIMAL is the CSV structural control, and the sandbox run showed commas, quotes, and newlines staying in one cell while the approved formula-leading strings were copied through. SECURITY.md does not add a formula-inertness promise, and README.md names the spreadsheet as a destination for that approved file. The approving user is the principal who opens it. Spreadsheet evaluation of a leading =, +, -, or @ was not run; that consumer step would apply the spreadsheet's own rules to the approved text and would not show another principal, an unapproved row, or a broken escaping promise. An omitted formula prefix is a hardening note."
+  },
+  {
+    "verdict": "needs_validation",
+    "fingerprint": "store.sql_literal.quote-doubling-only",
+    "title": "SQL export encodes every dialect with quote-doubling only",
+    "description": "Approved claim, source_url, and quote are stored from MCP add_finding and later written into INSERT statements by one encoder. sql_literal wraps every non-integer export value in single quotes and replaces each single quote with two single quotes. A backslash is copied unchanged. to_sql calls that encoder for postgres, sqlite, snowflake, and bigquery. DIALECTS supplies only CREATE TABLE type names: INTEGER and TEXT, or INT64 and STRING for bigquery. Goal title, note, and approved_at use the same encoder because to_sql maps sql_literal across every EXPORT_COLUMNS value. CLI add-finding reaches that encoder through the same api.add_finding function. The strongest control on the generated text is this quote doubling. Bound parameters protect only the desk's own SQLite insert. The approved-row filter chooses which rows are exported and does not rewrite the strings. A sandbox MCP run approved the quote whose characters are x, backslash, quote, comma, space, CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --, with source_url https://a.example/p. postgres, sqlite, snowflake, and bigquery emitted the same INSERT line. The quote literal in that INSERT is an opening quote, x, a backslash, two quotes, a comma, a space, CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --, and a closing quote. Python sqlite3.executescript of the sqlite dialect stored that quote as one column equal to the submitted payload and produced one row. The characters SELECT 1 were inside that column, not a second statement. A separate approved source_url https://a.example/a\\'b was encoded as an opening quote, https://a.example/a, a backslash, two quotes, b, and a closing quote, and sqlite stored the original URL. check_url accepted that URL. An apostrophe claim was encoded as an opening quote, It, two quotes, s, space, two quotes, quoted, two quotes, semicolon, space, DROP TABLE x; --, and a closing quote. README and SECURITY.md say every value is escaped as a standard SQL literal and that dialect changes types only. No per-dialect string escaper is in source. BigQuery, Snowflake, and Postgres were not installed, so this run does not show whether those bytes remain one literal in each named engine. Quote-doubling that sqlite accepted is not that result.",
+    "claimed_root_cause": "sql_literal is the only string encoder and it only doubles single quotes. to_sql selects DIALECTS type names and then interpolates sql_literal for every column and every dialect, so a backslash followed by a quote stays inside the INSERT text.",
+    "trace": [
+      {
+        "kind": "entrypoint",
+        "file": "server/mcp_server.py",
+        "line": 67,
+        "scope": "handle",
+        "description": "tools/call reads name and arguments from the JSON-RPC params. add_finding's claim, source_url, and quote enter here, and this handler does not restrict quotes or backslashes."
+      },
+      {
+        "kind": "propagation",
+        "file": "server/mcp_server.py",
+        "line": 43,
+        "scope": "call",
+        "description": "add_finding passes goal_id, claim, source_url, and quote to api.add_finding. A missing quote becomes an empty string."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/api.py",
+        "line": 40,
+        "scope": "add_finding",
+        "description": "api.add_finding opens a Desk and passes claim, source_url, and quote to Desk.add_finding."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 111,
+        "scope": "Desk.add_finding",
+        "description": "The finding insert binds claim, check_url(source_url), and the stripped quote. That local SQLite statement is not the export sink."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 152,
+        "scope": "Desk.approved_rows",
+        "description": "Export reads goal title, claim, source_url, quote, note, and approved_at only where status is approved. Approval does not rewrite those strings."
+      },
+      {
+        "kind": "propagation",
+        "file": "research_desk/store.py",
+        "line": 195,
+        "scope": "to_sql",
+        "description": "to_sql passes every export column through sql_literal and places the results in one INSERT. Dialect does not change this line."
+      },
+      {
+        "kind": "sink",
+        "file": "research_desk/store.py",
+        "line": 180,
+        "scope": "sql_literal",
+        "description": "A string becomes a single-quoted literal. The only transformation is replacing each single quote with two single quotes, so a backslash is copied unchanged."
+      }
+    ],
+    "evidence": [
+      {
+        "file": "research_desk/store.py",
+        "line": 180,
+        "description": "sql_literal returns NULL, the decimal form of an int, or a single-quoted string with each single quote replaced by two single quotes. Backslash is not rewritten."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 37,
+        "description": "DIALECTS maps postgres, sqlite, and snowflake to INTEGER and TEXT, and bigquery to INT64 and STRING. The map has no string-escaping field."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 188,
+        "description": "to_sql loads the selected dialect's type names from DIALECTS. Those names are used for the CREATE TABLE column types."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 195,
+        "description": "Each approved row builds one INSERT by calling sql_literal on every EXPORT_COLUMNS value. The dialect argument does not change this expression."
+      },
+      {
+        "file": "research_desk/store.py",
+        "line": 64,
+        "description": "check_url accepts a URL when the scheme is http or https and the netloc is non-empty, then returns that stripped string. A path may contain a backslash and a quote."
+      },
+      {
+        "file": "server/mcp_server.py",
+        "line": 27,
+        "description": "The add_finding inputSchema types claim, source_url, and quote as string and sets no pattern or character allowlist. quote is optional."
+      },
+      {
+        "file": "bin/research-desk",
+        "line": 35,
+        "description": "CLI add-finding passes goal_id, claim, source_url, and quote from argv into api.add_finding, the same function the MCP tool calls."
+      },
+      {
+        "file": "README.md",
+        "line": 73,
+        "description": "The export section states that dialect changes column types only, with bigquery using INT64 and STRING, and that strings are escaped as standard SQL literals."
+      },
+      {
+        "file": "SECURITY.md",
+        "line": 3,
+        "description": "The security note states that every value is escaped as a SQL string literal and that exports are text the user runs elsewhere."
+      },
+      {
+        "file": "skills/review-and-export/SKILL.md",
+        "line": 16,
+        "description": "The review skill states that dialect postgres, sqlite, snowflake, or bigquery changes column types only."
+      },
+      {
+        "file": "tests/test_desk.py",
+        "line": 71,
+        "description": "The shipped test runs the sqlite dialect export with executescript. The claim fixture on line 61 contains an apostrophe and the text DROP TABLE x. The test does not execute postgres, snowflake, or bigquery."
+      }
+    ],
+    "blockers": [
+      "The only SQL engine executed was Python sqlite3 3.45.1. executescript of the sqlite-dialect export kept the backslash-quote payload in one quote column and did not run SELECT 1. psql, a Snowflake client, and bq are not installed. BigQuery, Snowflake, and Postgres did not run.",
+      "Whether the quote literal (opening quote, x, backslash, quote, quote, comma, space, CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --, closing quote) is one string or a statement boundary depends on each named dialect's string lexer. Those lexers are outside this sandbox, and the sqlite result does not decide them."
+    ],
+    "validation_plan": {
+      "local": "Send MCP initialize, start_goal with title Goal, add_finding for goal_id 1, claim claim-one, source_url https://a.example/p, and quote x\\', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --, then approve that finding id and call export_sql with no out_path for postgres, sqlite, snowflake, and bigquery. Compare the INSERT lines. Run the sqlite text with sqlite3.connect(':memory:').executescript and SELECT the quote column. This sandbox run produced identical INSERT lines for the four dialects, and the sqlite quote column equaled the submitted payload with one row. A second export whose source_url was https://a.example/a\\'b used the same quote-doubling rule, and sqlite stored that original URL. A passing sqlite replay does not measure BigQuery, Snowflake, or Postgres.",
+      "deployment": "In a new empty disposable database, schema, or dataset that contains no other objects, load one approved finding with source_url https://a.example/p and quote x\\', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --. Run that unchanged export text once in BigQuery standard SQL, once in Snowflake, and once in Postgres. SELECT the quote column and record whether it equals the submitted payload and whether any statement other than the CREATE and the single INSERT ran. On Postgres, record standard_conforming_strings and repeat in that same empty database with the setting on and with it off. Separately, evaluate the one-column literal 'It''s' in each engine and record the returned text. Stop after those reads. Do not add DROP, do not write any object beyond that empty script, and do not point the script at a populated warehouse."
+    }
+  }
+]
