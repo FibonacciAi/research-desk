@@ -1,0 +1,20 @@
+{
+  "name": "research-desk",
+  "displayName": "Research Desk",
+  "version": "0.1.0",
+  "description": "Research Desk: turn a research goal and your sources into draft findings, approve or discard each one, then export the approved rows as a clean SQL table (or CSV). Local, free, no accounts.",
+  "author": {
+    "name": "sevenfourone studio",
+    "email": "heydimitri@mail.grokbot.com",
+    "url": "https://sevenfourone.studio"
+  },
+  "homepage": "https://github.com/FibonacciAi/research-desk",
+  "repository": "https://github.com/FibonacciAi/research-desk",
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "keywords": ["research", "findings", "sources", "citations", "approve", "sql", "csv", "export", "mcp", "skills"],
+  "category": "productivity",
+  "tags": ["research", "data", "sql", "mcp", "skills"],
+  "mcpServers": "./mcp.json",
+  "skills": "./skills/"
+}

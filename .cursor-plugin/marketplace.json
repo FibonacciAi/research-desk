@@ -1,0 +1,16 @@
+{
+  "name": "research-desk",
+  "owner": {"name": "sevenfourone studio"},
+  "metadata": {
+    "description": "Research Desk: sources in, approved findings out, as a clean SQL table.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "research-desk",
+      "source": ".",
+      "skills": "skills",
+      "description": "Research Desk: goal, draft findings with source URLs, approve or discard each one, export approved rows as SQL or CSV."
+    }
+  ]
+}

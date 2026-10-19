@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""Research Desk CLI. Every command prints one JSON object (export --out-only prints the file path)."""
+import argparse
+import json
+from pathlib import Path
+import sys
+
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from research_desk import api  # noqa: E402
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(prog="research-desk", description="Goal -> draft findings -> approve or discard -> SQL/CSV export.")
+    p.add_argument("--db", help="SQLite file (default: $RESEARCH_DESK_HOME/desk.db or ~/.local/share/research-desk/desk.db)")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("status")
+    sub.add_parser("demo", help="load the fictional Harborline goal as drafts")
+    s = sub.add_parser("start-goal"); s.add_argument("title")
+    sub.add_parser("goals")
+    s = sub.add_parser("add-finding"); s.add_argument("goal_id", type=int); s.add_argument("claim"); s.add_argument("source_url"); s.add_argument("--quote", default="")
+    s = sub.add_parser("list"); s.add_argument("--goal", type=int); s.add_argument("--status", default="pending", choices=["pending", "approved", "discarded", "all"])
+    for name in ("approve", "discard"):
+        s = sub.add_parser(name); s.add_argument("ids", nargs="+", type=int); s.add_argument("--note", default="")
+    s = sub.add_parser("export"); s.add_argument("--goal", type=int); s.add_argument("--format", default="sql", choices=["sql", "csv"])
+    s.add_argument("--table", default="research_findings"); s.add_argument("--dialect", default="postgres", choices=["postgres", "sqlite", "snowflake", "bigquery"])
+    s.add_argument("--out", help="write the export to this file")
+    a = p.parse_args(argv)
+    db = a.db
+    try:
+        if a.cmd == "status": r = api.status(db)
+        elif a.cmd == "demo": r = api.demo(db)
+        elif a.cmd == "start-goal": r = api.start_goal(a.title, db)
+        elif a.cmd == "goals": r = api.list_goals(db)
+        elif a.cmd == "add-finding": r = api.add_finding(a.goal_id, a.claim, a.source_url, a.quote, db)
+        elif a.cmd == "list": r = api.list_findings(a.goal, a.status, db)
+        elif a.cmd == "approve": r = api.approve(a.ids, a.note, db)
+        elif a.cmd == "discard": r = api.discard(a.ids, a.note, db)
+        elif a.cmd == "export": r = api.export(a.goal, a.format, a.table, a.dialect, a.out, db)
+    except api.DeskError as e:
+        print(json.dumps({"ok": False, "error": str(e)}))
+        return 2
+    print(json.dumps({"ok": True, **r}, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

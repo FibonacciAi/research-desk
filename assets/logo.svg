@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Research Desk logo">
+  <title>Research Desk</title>
+  <rect width="512" height="512" rx="112" fill="#17140F"/>
+  <rect x="150" y="96" width="232" height="286" rx="26" fill="none" stroke="#C8823A" stroke-width="18" transform="rotate(8 266 239)"/>
+  <rect x="118" y="126" width="232" height="286" rx="26" fill="#F4EBDD"/>
+  <rect x="152" y="172" width="164" height="18" rx="9" fill="#17140F"/>
+  <rect x="152" y="214" width="124" height="18" rx="9" fill="#17140F" opacity="0.55"/>
+  <rect x="152" y="256" width="144" height="18" rx="9" fill="#17140F" opacity="0.55"/>
+  <circle cx="352" cy="368" r="70" fill="#5FB8A1" stroke="#17140F" stroke-width="16"/>
+  <path d="M 320 368 L 344 392 L 388 342" fill="none" stroke="#17140F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,31 @@
+{
+  "note": "Fictional demo. Harborline Freight, its people, numbers and every URL below are invented. The .example domain is reserved and never resolves.",
+  "goal": "Is Harborline Freight a good fit for a 2027 West Coast cold-chain pilot?",
+  "findings": [
+    {
+      "claim": "Harborline Freight operates 14 refrigerated cross-dock sites on the US West Coast.",
+      "source_url": "https://harborline.example/about/network",
+      "quote": "Our network includes 14 temperature-controlled cross-docks from San Diego to Seattle."
+    },
+    {
+      "claim": "Harborline reports 98.6% on-time delivery for refrigerated loads in 2025.",
+      "source_url": "https://harborline.example/reports/2025-service",
+      "quote": "Refrigerated on-time performance: 98.6% (calendar 2025)."
+    },
+    {
+      "claim": "An industry newsletter puts Harborline's refrigerated on-time rate closer to 94%.",
+      "source_url": "https://coldchain-weekly.example/2026/03/carrier-scorecard",
+      "quote": "Harborline Freight: 94.1% on-time, reefer segment, trailing twelve months."
+    },
+    {
+      "claim": "Harborline added real-time temperature telemetry to its whole reefer fleet in 2026.",
+      "source_url": "https://harborline.example/news/2026-telemetry",
+      "quote": "Every reefer trailer now streams temperature readings every 60 seconds."
+    },
+    {
+      "claim": "A forum post says Harborline is about to be acquired.",
+      "source_url": "https://forum.example/t/harborline-rumor",
+      "quote": "heard from a friend they're getting bought, not confirmed"
+    }
+  ]
+}

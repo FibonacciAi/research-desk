@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "research-desk": {
+      "command": "python3",
+      "args": ["${CURSOR_PLUGIN_ROOT}/server/mcp_server.py"],
+      "cwd": "${CURSOR_PLUGIN_ROOT}"
+    }
+  }
+}
