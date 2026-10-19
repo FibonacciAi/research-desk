@@ -7,6 +7,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +57,70 @@ class StoreTests(unittest.TestCase):
             self.d.approve(b["id"])
         self.assertEqual(self.d.list_findings(status="pending"), [])
 
+    def test_two_connections_discard_then_approve_stays_discarded(self):
+        # Pause the approve connection after it has started _decide and before
+        # its UPDATE runs, then discard from a second connection. A sequential
+        # discard-then-approve on one connection already raises, and would not
+        # catch an UPDATE that ignores status.
+        g = self.d.start_goal("goal")
+        finding = self.d.add_finding(g["id"], "contested claim", "https://a.example/race", "q")
+        fid = finding["id"]
+        discarder = Desk(self.db)
+        discarder.db.execute("PRAGMA busy_timeout = 2000")
+        reached = threading.Event()
+        release = threading.Event()
+        errors = {}
+
+        def run_approve():
+            # Own connection, created on this thread. Its UPDATE waits until
+            # the other connection has discarded and committed.
+            approver = Desk(self.db)
+            approver.db.execute("PRAGMA busy_timeout = 2000")
+            real_db = approver.db
+
+            class _PauseBeforeDecision:
+                def execute(self, sql, *args, **kwargs):
+                    if isinstance(sql, str) and sql.startswith("UPDATE findings SET status"):
+                        reached.set()
+                        if not release.wait(5):
+                            raise TimeoutError("approve was not released")
+                    return real_db.execute(sql, *args, **kwargs)
+
+                def __getattr__(self, name):
+                    return getattr(real_db, name)
+
+            approver.db = _PauseBeforeDecision()
+            try:
+                approver.approve(fid, "late")
+            except DeskError as exc:
+                errors["approve"] = str(exc)
+            finally:
+                approver.db = real_db
+                approver.close()
+
+        worker = threading.Thread(target=run_approve)
+        try:
+            worker.start()
+            self.assertTrue(reached.wait(5), "approve never reached its UPDATE")
+            self.assertEqual(discarder.discard(fid, "no")["status"], "discarded")
+            release.set()
+            worker.join(5)
+            self.assertFalse(worker.is_alive())
+        finally:
+            release.set()
+            worker.join(5)
+            discarder.close()
+
+        self.assertEqual(errors.get("approve"), f"finding {fid} is already discarded")
+        self.assertEqual(self.d.finding(fid)["status"], "discarded")
+        self.assertEqual(self.d.approved_rows(), [])
+        exported = self.d.export()["text"]
+        self.assertNotIn("contested claim", exported)
+        self.assertNotIn("INSERT INTO", exported)
+        with self.assertRaises(DeskError) as missing:
+            self.d.approve(999)
+        self.assertEqual(str(missing.exception), "no finding 999")
+
     def test_export_only_approved_and_sql_runs(self):
         g = self.d.start_goal("Bob's goal")
         a = self.d.add_finding(g["id"], "It's 'quoted'; DROP TABLE x; --", "https://a.example/?q=1&r=2", "line1\nline2")
@@ -98,6 +163,159 @@ class StoreTests(unittest.TestCase):
             self.d.approve(self.d.add_finding(g["id"], "f" + g["title"], "https://a.example")["id"])
         self.assertEqual(self.d.export(goal_id=g2["id"])["rows"], 1)
         self.assertEqual(self.d.export()["rows"], 2)
+
+
+def _decode_snowflake(literal):
+    """One single-quoted Snowflake literal, per the string-constant docs."""
+    if not literal.startswith("'"):
+        raise AssertionError(literal)
+    i, out = 1, []
+    simple = {"'": "'", '"': '"', "\\": "\\", "b": "\b", "f": "\f", "n": "\n", "r": "\r", "t": "\t", "0": "\0"}
+    while i < len(literal):
+        ch = literal[i]
+        if ch == "'":
+            if i + 1 < len(literal) and literal[i + 1] == "'":
+                out.append("'")
+                i += 2
+                continue
+            return "".join(out), literal[i + 1:]
+        if ch == "\\":
+            nxt = literal[i + 1]
+            if nxt in simple:
+                out.append(simple[nxt])
+                i += 2
+                continue
+            if nxt == "u":
+                out.append(chr(int(literal[i + 2:i + 6], 16)))
+                i += 6
+                continue
+            out.append(nxt)  # a backslash outside the documented table is ignored
+            i += 2
+            continue
+        if ch == "\n":
+            raise AssertionError("raw newline in a Snowflake literal")
+        out.append(ch)
+        i += 1
+    raise AssertionError("unterminated Snowflake literal")
+
+
+def _decode_bigquery(literal):
+    """One single-quoted BigQuery literal. '' is not an escaped quote."""
+    if not literal.startswith("'"):
+        raise AssertionError(literal)
+    i, out = 1, []
+    simple = {
+        "a": "\a", "b": "\b", "f": "\f", "n": "\n", "r": "\r", "t": "\t", "v": "\v",
+        "\\": "\\", "?": "?", "'": "'", '"': '"', "`": "`",
+    }
+    while i < len(literal):
+        ch = literal[i]
+        if ch == "\n":
+            raise AssertionError("raw newline in a BigQuery quoted string")
+        if ch == "'":
+            return "".join(out), literal[i + 1:]
+        if ch == "\\":
+            nxt = literal[i + 1]
+            if nxt in simple:
+                out.append(simple[nxt])
+                i += 2
+                continue
+            if nxt == "u":
+                out.append(chr(int(literal[i + 2:i + 6], 16)))
+                i += 6
+                continue
+            if nxt == "U":
+                out.append(chr(int(literal[i + 2:i + 10], 16)))
+                i += 10
+                continue
+            if nxt in ("x", "X"):
+                out.append(chr(int(literal[i + 2:i + 4], 16)))
+                i += 4
+                continue
+            if nxt in "01234567":
+                out.append(chr(int(literal[i + 1:i + 4], 8)))
+                i += 4
+                continue
+            raise AssertionError("unknown BigQuery escape \\" + nxt)
+        out.append(ch)
+        i += 1
+    raise AssertionError("unterminated BigQuery literal")
+
+
+class SqlLiteralTests(unittest.TestCase):
+    PAYLOADS = [
+        "",
+        "plain",
+        "it's",
+        "a\\b",
+        "end\\",
+        "\\z",
+        "\\x41",
+        "\\n",
+        "line1\nline2",
+        "tab\there",
+        "cr\rhere",
+        "nul\0here",
+        "\0" + "12",
+        "\\\n",
+        "bell\ahere",
+        "vt\vhere",
+        "snowman \u26c4",
+        "quotes '''",
+        "x\\', CODE_POINTS_TO_STRING([65]), NULL, NULL, NULL); SELECT 1; --",
+    ]
+
+    def test_postgres_and_sqlite_only_double_quotes(self):
+        for dialect in ("postgres", "sqlite"):
+            self.assertEqual(store.sql_literal(None, dialect), "NULL")
+            self.assertEqual(store.sql_literal(3, dialect), "3")
+            self.assertEqual(store.sql_literal("it's", dialect), "'it''s'")
+            self.assertEqual(store.sql_literal("a\\b", dialect), "'a\\b'")
+            self.assertEqual(store.sql_literal("line1\nline2", dialect), "'line1\nline2'")
+            escaped = store.sql_literal(self.PAYLOADS[-1], dialect)
+            self.assertIn("SELECT 1; --", escaped)
+            self.assertTrue(escaped.endswith("'"))
+
+    def test_snowflake_and_bigquery_round_trip_documented_lexers(self):
+        decoders = {"snowflake": _decode_snowflake, "bigquery": _decode_bigquery}
+        for dialect, decode in decoders.items():
+            for value in self.PAYLOADS:
+                literal = store.sql_literal(value, dialect)
+                decoded, rest = decode(literal)
+                self.assertEqual(rest, "", (dialect, value, literal, rest))
+                self.assertEqual(decoded, value, (dialect, value, literal))
+                self.assertNotIn("\n", literal)
+
+    def test_bigquery_quote_and_newline_bytes(self):
+        self.assertEqual(store.sql_literal("it's", "bigquery"), "'it\\'s'")
+        self.assertEqual(store.sql_literal("line1\nline2", "bigquery"), "'line1\\nline2'")
+        self.assertEqual(store.sql_literal("a\\b", "bigquery"), "'a\\\\b'")
+        self.assertEqual(store.sql_literal("end\\", "snowflake"), "'end\\\\'")
+        self.assertEqual(store.sql_literal("it's", "snowflake"), "'it''s'")
+        # \0 would be read as octal and swallow the following digits.
+        self.assertEqual(store.sql_literal("\0" + "12", "snowflake"), "'\\u000012'")
+        self.assertEqual(store.sql_literal("\0" + "12", "bigquery"), "'\\u000012'")
+
+    def test_export_backslash_quote_is_one_sqlite_column(self):
+        quote = self.PAYLOADS[-1]
+        with tempfile.TemporaryDirectory() as tmp:
+            desk = Desk(os.path.join(tmp, "d.db"))
+            try:
+                g = desk.start_goal("g")
+                fid = desk.add_finding(g["id"], "claim", "https://a.example", quote)["id"]
+                desk.approve(fid)
+                sql = desk.export(dialect="sqlite")["text"]
+                target = sqlite3.connect(":memory:")
+                target.executescript(sql)
+                stored = target.execute("SELECT quote FROM research_findings").fetchone()[0]
+                self.assertEqual(stored, quote)
+                for dialect, decode in (("snowflake", _decode_snowflake), ("bigquery", _decode_bigquery)):
+                    text = desk.export(dialect=dialect)["text"]
+                    literal = store.sql_literal(quote, dialect)
+                    self.assertIn(literal, text)
+                    self.assertEqual(decode(literal), (quote, ""))
+            finally:
+                desk.close()
 
 
 class DemoAndApiTests(unittest.TestCase):

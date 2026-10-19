@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS research_findings (
 INSERT INTO research_findings (...) VALUES (...);
 ```
 
-`--dialect` changes column types only (`bigquery` uses `INT64`/`STRING`). `--table` must be a plain identifier. Strings are escaped as standard SQL literals.
+`--dialect` selects column types (`bigquery` uses `INT64`/`STRING`; the others use `INTEGER`/`TEXT`) and string escaping. `postgres` and `sqlite` double single quotes and leave backslashes as themselves, which matches SQLite and Postgres with `standard_conforming_strings` on (the server default). `snowflake` and `bigquery` also escape backslashes, because those engines treat `\` as an escape. `bigquery` writes a quote as `\'` and a real newline as `\n`. `--table` must be a plain identifier.
 
 ## Data and privacy
 

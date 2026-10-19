@@ -13,7 +13,7 @@ description: Research Desk review and export. Use when the user wants to approve
 
 ## Export
 - `export_sql` (CLI: `export`) returns approved findings only, as `CREATE TABLE IF NOT EXISTS research_findings (...)` plus one `INSERT` per row. Pending and discarded drafts are never included.
-- Options: `goal_id`; `format` `sql` or `csv`; `table` (a plain identifier); `dialect` `postgres` (default), `sqlite`, `snowflake` or `bigquery` (column types only); `out_path` to write a local file.
+- Options: `goal_id`; `format` `sql` or `csv`; `table` (a plain identifier); `dialect` `postgres` (default), `sqlite`, `snowflake` or `bigquery` (column types, and string escapes for `snowflake` and `bigquery`); `out_path` to write a local file.
 - Columns: `id, goal_id, goal, claim, source_url, quote, note, approved_at`.
 - The export is a copy. Research Desk never connects to or writes into a warehouse; the user runs the SQL wherever they like (for example `psql -f research_findings.sql` or `sqlite3 desk.db < research_findings.sql`).
 
